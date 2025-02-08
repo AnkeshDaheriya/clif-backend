@@ -3,14 +3,270 @@ const userModel = require("../models/users");
 
 const userRegister = async (req, res) => {
   try {
-    const { email, username, password, contact_no } = req.body;
-    if (!email || !username || !password || !contact_no) {
-      return res.json({
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      headshot,
+      age,
+      phone_no,
+      gender,
+      current_employer,
+      desired_employer,
+      current_location,
+      education,
+      yearOfCompletion,
+      // specialization,
+      desiredLocationCountry,
+      desiredLocationCity,
+      professionalDomain,
+      currentRole,
+      currentSalary,
+      desiredRole,
+      desiredSalary,
+      linkedinUrl,
+      fileUpload,
+      // otp,
+      // otpVerified,
+      // isDeleted,
+    } = req.body;
+    // if (
+    //   !firstName ||
+    //   !lastName ||
+    //   !email ||
+    //   !password ||
+    //   !age ||
+    //   !phone_no ||
+    //   !gender ||
+    //   !current_employer ||
+    //   !desired_employer ||
+    //   !current_location ||
+    //   !education ||
+    //   !yearOfCompletion ||
+    //   !desiredLocationCountry ||
+    //   !desiredLocationCity ||
+    //   !professionalDomain ||
+    //   !currentRole ||
+    //   !currentSalary ||
+    //   !desiredRole ||
+    //   !desiredSalary ||
+    //   !linkedinUrl ||
+    //   !fileUpload
+    // ) {
+    //   return res.status(400).json({
+    //     status: 400,
+    //     message: "All fields are required!",
+    //     success: false,
+    //     missingFields: {
+    //       firstName: !firstName ? "First name is required" : null,
+    //       lastName: !lastName ? "Last name is required" : null,
+    //       email: !email ? "Email is required" : null,
+    //       password: !password ? "Password is required" : null,
+    //       age: !age ? "Age is required" : null,
+    //       phone_no: !phone_no ? "Phone number is required" : null,
+    //       gender: !gender ? "Gender is required" : null,
+    //       current_employer: !current_employer
+    //         ? "Current employer is required"
+    //         : null,
+    //       desired_employer: !desired_employer
+    //         ? "Desired employer is required"
+    //         : null,
+    //       current_location: !current_location
+    //         ? "Current location is required"
+    //         : null,
+    //       education: !education ? "Education is required" : null,
+    //       yearOfCompletion: !yearOfCompletion
+    //         ? "Year of completion is required"
+    //         : null,
+    //       desiredLocationCountry: !desiredLocationCountry
+    //         ? "Desired location country is required"
+    //         : null,
+    //       desiredLocationCity: !desiredLocationCity
+    //         ? "Desired location city is required"
+    //         : null,
+    //       professionalDomain: !professionalDomain
+    //         ? "Professional domain is required"
+    //         : null,
+    //       currentRole: !currentRole ? "Current role is required" : null,
+    //       currentSalary: !currentSalary ? "Current salary is required" : null,
+    //       desiredRole: !desiredRole ? "Desired role is required" : null,
+    //       desiredSalary: !desiredSalary ? "Desired salary is required" : null,
+    //       linkedinUrl: !linkedinUrl ? "LinkedIn URL is required" : null,
+    //       fileUpload: !fileUpload ? "File upload is required" : null,
+    //     },
+    //   });
+    // }
+
+    // Email format validations
+    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // if (!emailRegex.test(email)) {
+    //   return res.status(400).json({
+    //     status: 400,
+    //     message: "Invalid email format",
+    //     success: false,
+    //   });
+    // }
+
+    // Phone number validation (assuming 10 digits)
+    // const phoneRegex = /^\d{10}$/;
+    // if (!phoneRegex.test(phone_no)) {
+    //   return res.status(400).json({
+    //     status: 400,
+    //     message: "Invalid phone number format. Must be 10 digits",
+    //     success: false,
+    //   });
+    // }
+
+    // LinkedIn URL validation
+    // const linkedinRegex = /^https:\/\/[a-z]{2,3}\.linkedin\.com\/.*$/;
+    // if (!linkedinRegex.test(linkedinUrl)) {
+    //   return res.status(400).json({
+    //     status: 400,
+    //     message: "Invalid LinkedIn URL format",
+    //     success: false,
+    //   });
+    // }
+
+    // Salary validation
+    // if (currentSalary <= 0 || desiredSalary <= 0) {
+    //   return res.status(400).json({
+    //     status: 400,
+    //     message: "Salary must be greater than 0",
+    //     success: false,
+    //   });
+    // }
+
+    // Year of completion validation
+    // const currentYear = new Date().getFullYear();
+    // if (yearOfCompletion < 1950 || yearOfCompletion > currentYear) {
+    //   return res.status(400).json({
+    //     status: 400,
+    //     message: "Invalid year of completion",
+    //     success: false,
+    //   });
+    // }
+
+    // Enum validations
+    // const validAgeRanges = [
+    //   "Below 18",
+    //   "18 – 25",
+    //   "26 – 34",
+    //   "35 – 45",
+    //   "45 – 55",
+    //   "56 and above",
+    // ];
+    // if (!validAgeRanges.includes(age)) {
+    //   return res.status(400).json({
+    //     status: 400,
+    //     message: "Invalid age range",
+    //     success: false,
+    //   });
+    // }
+
+    // const validGenders = ["Male", "Female", "Rather not specify"];
+    // if (!validGenders.includes(gender)) {
+    //   return res.status(400).json({
+    //     status: 400,
+    //     message: "Invalid gender selection",
+    //     success: false,
+    //   });
+    // }
+
+    // const validEducation = ["Undergrad", "Bachelors", "Masters", "Doctorate"];
+    // if (!validEducation.includes(education)) {
+    //   return res.status(400).json({
+    //     status: 400,
+    //     message: "Invalid education level",
+    //     success: false,
+    //   });
+    // }
+
+    // const validProfessionalDomains = [
+    //   "Technology",
+    //   "Management",
+    //   "Finance",
+    //   "Content Creator",
+    //   "Entrepreneurship",
+    //   "Business Intelligence",
+    //   "Venture Capital",
+    // ];
+    // if (!validProfessionalDomains.includes(professionalDomain)) {
+    //   return res.status(400).json({
+    //     status: 400,
+    //     message: "Invalid professional domain",
+    //     success: false,
+    //   });
+    // }
+
+    // const validRoles = [
+    //   "Undergrad / Not Employed",
+    //   "Entry Level / Intern",
+    //   "Individual Contributor (Jr. Level)",
+    //   "Individual Contributor (Sr. Level)",
+    //   "Manager",
+    //   "Sr. Manager",
+    //   "Director / Assistant Vice President",
+    //   "Vice President",
+    //   "C-Suite (CEO/CFO/CMO & Similar)",
+    //   "Chairperson / Board of Directors",
+    // ];
+
+    // if (!validRoles.includes(currentRole)) {
+    //   return res.status(400).json({
+    //     status: 400,
+    //     message: "Invalid current role",
+    //     success: false,
+    //   });
+    // }
+
+    // if (!validRoles.includes(desiredRole)) {
+    //   return res.status(400).json({
+    //     status: 400,
+    //     message: "Invalid desired role",
+    //     success: false,
+    //   });
+    // }
+
+    // File validation (assuming you want to check file type)
+    // console.log("Files", req.files);
+    console.log("$fileUpload", req.files);
+    const uploadFileLocation = `/public/resume_files/${req.files.fileUpload[0].originalname}`;
+    const headshotLocation = `/public/resume_files/${req.files.headshot[0].originalname}`;
+    // console.log("$image", headshot);
+    const allowedFileTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+    if (!allowedFileTypes.includes(req.files.fileUpload[0].mimetype)) {
+      return res.status(400).json({
         status: 400,
-        message: "All fields are required!",
+        message: "Invalid file type. Please upload PDF or Word document",
         success: false,
       });
     }
+    const allowedImageTypes = ["image/jpg", "image/jpeg", "image/png"];
+    const maxImageSize = 5 * 1024 * 1024; // 5MB
+
+    if (headshot) {
+      if (!allowedImageTypes.includes(req.files.headshot[0].mimetype)) {
+        return res.status(400).json({
+          status: 400,
+          message: "Invalid image format. Please upload JPG, JPEG or PNG",
+          success: false,
+        });
+      }
+
+      if (headshot.size > maxImageSize) {
+        return res.status(400).json({
+          status: 400,
+          message: "Image size should be less than 5MB",
+          success: false,
+        });
+      }
+    }
+    // If all validations pass, proceed with user creation
     const existingUser = await userModel.findOne({ email });
     if (existingUser) {
       return res.json({
@@ -21,10 +277,29 @@ const userRegister = async (req, res) => {
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new userModel({
-      email: email,
-      userName: username,
+      firstName,
+      lastName,
+      email,
       password: hashedPassword,
-      contact_no: contact_no,
+      headshot: headshotLocation,
+      age,
+      phone_no,
+      gender,
+      current_employer,
+      desired_employer,
+      current_location,
+      education,
+      yearOfCompletion,
+      // specialization,
+      desiredLocationCountry,
+      desiredLocationCity,
+      professionalDomain,
+      currentRole,
+      currentSalary,
+      desiredRole,
+      desiredSalary,
+      linkedinUrl,
+      fileUpload: uploadFileLocation,
     });
     newUser.save();
     return res.json({
