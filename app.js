@@ -8,6 +8,8 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 const { ConnectDB } = require("./config/db.js");
 const { authRoutes } = require("./routes/authRoute.js");
+const { otpRoutes } = require("./routes/otpRoutes.js");
+
 const { uploadRoutes } = require("./routes/resumeRoutes.js");
 var app = express();
 // view engine setup
@@ -26,6 +28,7 @@ ConnectDB();
 // app.use("/users", usersRouter);
 
 app.use("/auth", authRoutes); //auth routes
+app.use("/auth", otpRoutes); //auth routes
 app.use("/resume", uploadRoutes); //auth routes
 
 // catch 404 and forward to error handler
