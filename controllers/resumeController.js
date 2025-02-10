@@ -1,22 +1,33 @@
 const { textExtraction } = require("../helper/resumeTextParser.js");
 
 const resumeUpload = async (req, res) => {
-  if (!req.file) {
-    return res.json({
+  if (!req.files) {
+    return {
       status: 400,
-      message: "No file were uploaded!",
+      message: "No file was uploaded!",
       success: false,
-    });
+    };
   }
-  const fileLocation = `public/resume_files/${req.file.filename}`;
-  console.log("$fileName", fileLocation);
-  const extractedText = await textExtraction(fileLocation);
-  return res.json({
-    status: 200,
-    message: "Extracted text",
-    extractedText: extractedText,
-    success: true,
-  });
+
+  const fileLocation = `public/resume_files/${req.files.fileUpload[0].originalname}`; // Add a slash before the filename
+  // console.log("$fileName", fileLocation);
+
+  try {
+    const extractedText = await textExtraction(fileLocation);
+    // console.log(extractedText);
+    return {
+      message: "Extracted text",
+      extractedText: extractedText,
+      success: true,
+    };
+  } catch (error) {
+    console.error("Error extracting text:", error);
+    return {
+      status: 500,
+      message: "Error extracting text",
+      success: false,
+    };
+  }
 };
 
 module.exports.uploadResume = resumeUpload;

@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const userModel = require("../models/users");
 const authService = require("../config/authService.js");
 const { ErrorHandler } = require("../helper/error");
+const { textExtraction } = require("../helper/resumeTextParser.js");
+const { uploadResume } = require("./resumeController.js");
 
 const userRegister = async (req, res) => {
   try {
@@ -92,7 +94,20 @@ const userRegister = async (req, res) => {
         },
       });
     }
-
+    if (!req.files.fileUpload) {
+      return res.json({
+        status: 400,
+        message: "Resume is required !",
+        success: false,
+      });
+    }
+    if (!req.files.headshot) {
+      return res.json({
+        status: 400,
+        message: "Profile picture is required !",
+        success: false,
+      });
+    }
     // Email format validations
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -227,7 +242,7 @@ const userRegister = async (req, res) => {
     // const fileUpload = req.files.fileUpload[0];
     const uploadFileLocation = `/public/resume_files/${req.files.fileUpload[0].originalname}`;
     const headshotLocation = `/public/resume_files/${req.files.headshot[0].originalname}`;
-    console.log("headshot", headshotLocation, "file loac", uploadFileLocation);
+    // console.log("headshot", headshotLocation, "file loac", uploadFileLocation);
     // console.log("$image", headshot);
     const allowedFileTypes = [
       "application/pdf",
@@ -259,7 +274,7 @@ const userRegister = async (req, res) => {
         });
       }
     }
-    console.log("test work");
+    // console.log("test work");
     // If all validations pass, proceed with user creation
     const existingUser = await userModel.findOne({ email });
     if (existingUser) {
@@ -269,7 +284,7 @@ const userRegister = async (req, res) => {
         success: false,
       });
     }
-    console.log("exist");
+    // console.log("exist");
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new userModel({
       firstname,
@@ -285,7 +300,7 @@ const userRegister = async (req, res) => {
       current_location,
       education,
       yearOfCompletion,
-      // specialization,
+      specialization,
       desiredLocationCountry,
       desiredLocationCity,
       professionalDomain,
@@ -297,9 +312,13 @@ const userRegister = async (req, res) => {
       fileUpload: uploadFileLocation,
     });
 
-    console.log("before save");
+    // console.log("uploadFileLocation",ss);
+    const resumeText = await uploadResume(req, res);
+    console.log("Resume Text", resumeText.extractedText);
+    // console.log("before save");
     newUser.save();
-    console.log("after save");
+    // console.log("after save");
+
     return res.json({
       status: 201,
       message: "User Registered success",
@@ -307,7 +326,7 @@ const userRegister = async (req, res) => {
       data: newUser,
     });
   } catch (error) {
-    console.log("error", error);
+    // console.log("error", error);
     return res.json({
       status: 500,
       message: "Internal server error",
