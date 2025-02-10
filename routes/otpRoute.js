@@ -35,8 +35,8 @@ const validateOTPVerification = (req, res, next) => {
 };
 
 // OTP routes
-router.post("/send-otp", otpLimiter, validateOTPRequest, otpController.sendOTP);
-router.post("/verify-otp", validateOTPVerification, otpController.verifyOTP);
+router.post("/send-otp", otpLimiter, validateOTPRequest, otpController.sendOtp);
+router.post("/verify-otp", validateOTPVerification, otpController.verifyOtp);
 
 // Health check route
 router.get("/health", (req, res) => {
@@ -46,4 +46,4 @@ router.get("/health", (req, res) => {
   });
 });
 
-module.exports.otpRoutes = router; // Use consistent export
+module.exports = router;

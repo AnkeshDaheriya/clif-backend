@@ -3,51 +3,55 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-const port = 5000;
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
+var cors = require("cors"); // ✅ Import cors
 const { ConnectDB } = require("./config/db.js");
-const { authRoutes } = require("./routes/authRoute.js");
-const { otpRoutes } = require("./routes/otpRoutes.js");
+const uploadRoutes = require("./routes/resumeRoutes.js");
+const authRoutes = require("./routes/authRoute.js");
+const otpRoutes = require("./routes/otpRoute.js");
 
-const { uploadRoutes } = require("./routes/resumeRoutes.js");
+const port = 5000;
 var app = express();
-// view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "jade");
 
+app.use(cors()); // ✅ Enable CORS before routes
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-// connecting to db
+
+// Debugging Middleware to Log Requests
+app.use((req, res, next) => {
+  console.log(`Incoming request: ${req.method} ${req.url}`);
+  next();
+});
+
+// ✅ Connect to Database
 ConnectDB();
 
-// app.use("/", indexRouter);
-// app.use("/users", usersRouter);
+// ✅ Define Routes
+app.use("/auth", authRoutes);
+app.use("/resume", uploadRoutes);
+app.use("/auth", otpRoutes);
 
-app.use("/auth", authRoutes); //auth routes
-app.use("/auth", otpRoutes); //auth routes
-app.use("/resume", uploadRoutes); //auth routes
+// ✅ Test Route (Check if the server is running)
+app.get("/", (req, res) => {
+  res.send("Server is running...");
+});
 
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
+// ✅ 404 Error Handling
+app.use((req, res, next) => {
   next(createError(404));
 });
 
-// error handler
-app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render("error");
+// ✅ Global Error Handler
+app.use((err, req, res, next) => {
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || "Internal Server Error",
+  });
 });
 
-// listening to port
+// ✅ Start the Server
 app.listen(port, () => {
-  console.log(`server starts at${port}`);
+  console.log(`🚀 Server running at http://localhost:${port}`);
 });

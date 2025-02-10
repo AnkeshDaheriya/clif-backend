@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const userModel = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     // Basic Information
     firstName: {
@@ -10,7 +10,7 @@ const userModel = new mongoose.Schema(
     },
     lastName: {
       type: String,
-      required: true,
+      required: false, // Make optional
       trim: true,
     },
     email: {
@@ -21,8 +21,14 @@ const userModel = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
+      // required: function () {
+      //   return !this.googleAuth; // Required only if not using Google login
+      // },
       trim: true,
+    },
+    googleAuth: {
+      type: Boolean,
+      default: false, // Set to true when user logs in via Google
     },
     headshot: {
       type: String, // Store the file path/URL
@@ -32,53 +38,43 @@ const userModel = new mongoose.Schema(
     // Personal Information
     age: {
       type: String,
-      // enum: [
-      //   "Below 18",
-      //   "18 – 25",
-      //   "26 – 34",
-      //   "35 – 45",
-      //   "45 – 55",
-      //   "56 and above",
-      // ],
-      required: true,
+      required: false, // Make optional
     },
     phone_no: {
       type: String,
-      required: true,
+      required: false, // Make optional
       trim: true,
     },
     gender: {
       type: String,
-      // enum: ["Male", "Female", "Rather not specify"],
-      required: true,
+      required: false, // Make optional
     },
 
     // Employment Information
     current_employer: {
       type: String,
-      required: true,
+      required: false, // Make optional
       trim: true,
     },
     desired_employer: {
       type: String,
-      required: true,
+      required: false, // Make optional
       trim: true,
     },
     current_location: {
       type: String,
-      required: true,
+      required: false, // Make optional
       trim: true,
     },
 
     // Education
     education: {
       type: String,
-      // enum: ["Undergrad", "Bachelors", "Masters", "Doctorate"],
-      required: true,
+      required: false, // Make optional
     },
     yearOfCompletion: {
       type: Number,
-      required: true,
+      required: false, // Make optional
     },
     specialization: {
       type: String,
@@ -88,79 +84,46 @@ const userModel = new mongoose.Schema(
     // Location Preferences
     desiredLocationCountry: {
       type: String,
-      required: true,
+      required: false, // Make optional
       trim: true,
     },
     desiredLocationCity: {
       type: String,
-      required: true,
+      required: false, // Make optional
       trim: true,
     },
 
     // Professional Details
     professionalDomain: {
       type: String,
-      // enum: [
-      //   "Technology",
-      //   "Management",
-      //   "Finance",
-      //   "Content Creator",
-      //   "Entrepreneurship",
-      //   "Business Intelligence",
-      //   "Venture Capital",
-      // ],
-      required: true,
+      required: false, // Make optional
     },
     currentRole: {
       type: String,
-      // enum: [
-      //   "Undergrad / Not Employed",
-      //   "Entry Level / Intern",
-      //   "Individual Contributor (Jr. Level)",
-      //   "Individual Contributor (Sr. Level)",
-      //   "Manager",
-      //   "Sr. Manager",
-      //   "Director / Assistant Vice President",
-      //   "Vice President",
-      //   "C-Suite (CEO/CFO/CMO & Similar)",
-      //   "Chairperson / Board of Directors",
-      // ],
-      required: true,
+      required: false, // Make optional
     },
     currentSalary: {
       type: Number,
-      required: true,
+      required: false, // Make optional
     },
     desiredRole: {
       type: String,
-      // enum: [
-      //   "Undergrad / Not Employed",
-      //   "Entry Level / Intern",
-      //   "Individual Contributor (Jr. Level)",
-      //   "Individual Contributor (Sr. Level)",
-      //   "Manager",
-      //   "Sr. Manager",
-      //   "Director / Assistant Vice President",
-      //   "Vice President",
-      //   "C-Suite (CEO/CFO/CMO & Similar)",
-      //   "Chairperson / Board of Directors",
-      // ],
-      required: true,
+      required: false, // Make optional
     },
     desiredSalary: {
       type: Number,
-      required: true,
+      required: false, // Make optional
     },
 
     // Additional Information
     linkedinUrl: {
       type: String,
-      required: true,
+      required: false, // Make optional
       trim: true,
     },
     fileUpload: {
       type: String, // Store the file path/URL
-      required: true,
+      required: false, // Make optional
       trim: true,
     },
 
@@ -195,4 +158,4 @@ const userModel = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("userModel", userModel);
+module.exports = mongoose.model("userModel", userSchema);

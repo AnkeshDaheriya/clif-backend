@@ -1,5 +1,8 @@
+// const firebaseAdmin = require("firebase-admin");
 const bcrypt = require("bcrypt");
 const userModel = require("../models/users");
+const authService = require("../config/authService.js");
+const { ErrorHandler } = require("../helper/error");
 
 const userRegister = async (req, res) => {
   try {
@@ -321,38 +324,70 @@ const userRegister = async (req, res) => {
 const userLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await userModel.findOne({ email });
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
+    }
+
+    const user = await userModel.findOne({ email: email.toLowerCase() }); // Ensure case-insensitive matching
     if (!user) {
-      return res.json({
-        status: 404,
+      return res.status(404).json({
+        success: false,
         message: "User not found",
-        success: false,
       });
     }
+
     const verify = await bcrypt.compare(password, user.password);
-    // console.log("$Verify", verify);
     if (!verify) {
-      return res.json({
-        status: 401,
-        message: "Invalid password",
+      return res.status(401).json({
         success: false,
+        message: "Invalid password",
       });
     }
-    return res.json({
-      status: 200,
-      message: "user login successfully",
+
+    return res.status(200).json({
       success: true,
+      message: "User login successful",
       data: user,
     });
   } catch (error) {
-    console.log(`error ${error}`);
-    return res.json({
-      status: 500,
-      message: "Internal server error",
+    console.error(`Login Error: ${error}`);
+    return res.status(500).json({
       success: false,
+      message: "Internal server error",
     });
+  }
+};
+
+const googleLogin = async (req, res, next) => {
+  try {
+    const { email, firstName, lastName } = req.body; // Extract email from the frontend request
+    console.log("Google Login Request Email:", email);
+
+    let user = await authService.googleLogin(email);
+
+    if (!user) {
+      // If user is not found, create a new user automatically
+      user = await authService.createGoogleUser(email, firstName, lastName);
+    }
+
+    // Generate JWT tokens
+    res.header("auth-token", user.token);
+    res.cookie("refreshToken", user.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Google Login Error:", err); // Log the error for debugging
+    next(err); // Pass the error to the global error handler instead of crashing
   }
 };
 
 module.exports.userRegister = userRegister;
 module.exports.userLogin = userLogin;
+module.exports.googleLogin = googleLogin;
