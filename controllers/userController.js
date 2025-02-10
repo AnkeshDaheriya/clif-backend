@@ -5,6 +5,8 @@ const authService = require("../config/authService.js");
 const { ErrorHandler } = require("../helper/error");
 const { textExtraction } = require("../helper/resumeTextParser.js");
 const { uploadResume } = require("./resumeController.js");
+const { AIResume } = require("../helper/OpenAiHelper.js");
+const { promptFormat } = require("../config/prompt.js");
 
 const userRegister = async (req, res) => {
   try {
@@ -314,7 +316,171 @@ const userRegister = async (req, res) => {
 
     // console.log("uploadFileLocation",ss);
     const resumeText = await uploadResume(req, res);
-    console.log("Resume Text", resumeText.extractedText);
+    console.log("Resume Text", resumeText.extractedText.pages);
+    const prompt = `Extract all details of my resume and,
+Create a detailed career growth plan for an individual over the next 12 months in role ${desired_employer} in ${desired_employer} in location ${desiredLocationCountry},${desiredLocationCity}, broken down into 12 milestones. Each milestone should represent a significant step in the user's professional development, including skill enhancement, certifications, learning activities, key actions, and job role progression.
+${resumeText.extractedText.pages},
+Return my resume's details in this format ${promptFormat} and exactly 12 career growth milestones in the following JSON format:
+mileStoes : {
+  "Milestone 1": {
+    "timeline": {
+      "startDate": "DD-MM-YYYY",
+      "endDate": "DD-MM-YYYY",
+      "durationMonths": number
+    },
+    "focusArea": "Skill Development - Frontend and Backend",
+    "goal": "Master React.js, Laravel, and Full-stack Development",
+    "keyActivities": [
+      "Complete advanced React.js and Laravel courses",
+      "Build a personal project integrating React and Laravel",
+      "Learn state management with Redux"
+    ],
+    "measurableOutcomes": [
+      "Complete 3 React projects",
+      "Build a full-stack web application with authentication"
+    ],
+    "learningResources": {
+      "courses": ["React - Advanced Concepts", "Master Laravel"],
+      "books": ["Learning React", "Laravel Up & Running"],
+      "tools": ["VS Code", "GitHub", "Docker"]
+    },
+    "kpis": ["Complete 2 major React applications", "Learn and apply Redux in a project"],
+    "jobRoleDevelopment": {
+      "role": "Full Stack Developer",
+      "responsibilities": [
+        "Develop advanced user interfaces",
+        "Work with backend and frontend integration"
+      ]
+    }
+  },
+  "Milestone 2": {
+    "timeline": {
+      "startDate": "01-04-2025",
+      "endDate": "01-05-2025",
+      "durationMonths": 1
+    },
+    "focusArea": "Backend Development and API Integration",
+    "goal": "Strengthen skills in API development and backend technologies",
+    "keyActivities": [
+      "Learn advanced API development with Laravel",
+      "Work on integrating third-party APIs",
+      "Start a personal project that involves complex backend systems"
+    ],
+    "measurableOutcomes": [
+      "Create a RESTful API in Laravel",
+      "Integrate a payment gateway API (Stripe)"
+    ],
+    "learningResources": {
+      "courses": ["Advanced Laravel API Development", "Building APIs with Laravel"],
+      "books": ["API Design Patterns", "Modern PHP"],
+      "tools": ["Postman", "XAMPP", "Stripe API"]
+    },
+    "kpis": ["Complete 2 API integrations", "Develop a robust authentication system for APIs"],
+    "jobRoleDevelopment": {
+      "role": "Backend Developer",
+      "responsibilities": [
+        "Develop and maintain server-side logic",
+        "Integrate third-party APIs"
+      ]
+    }
+  },
+  "Milestone 3": {
+    "timeline": {
+      "startDate": "01-05-2025",
+      "endDate": "01-06-2025",
+      "durationMonths": 1
+    },
+    "focusArea": "Cloud Deployment and DevOps",
+    "goal": "Enhance skills in cloud deployment and DevOps tools like Docker and AWS",
+    "keyActivities": [
+      "Deploy applications on AWS EC2 and S3",
+      "Learn Docker and containerize existing projects",
+      "Explore AWS Lambda and serverless architecture"
+    ],
+    "measurableOutcomes": [
+      "Successfully deploy an app on AWS",
+      "Containerize 2 existing applications"
+    ],
+    "learningResources": {
+      "courses": ["AWS Certified Solutions Architect", "Docker for Developers"],
+      "books": ["AWS Up & Running", "Docker in Action"],
+      "tools": ["AWS CLI", "Docker Desktop"]
+    },
+    "kpis": ["Deploy 3 apps to AWS", "Successfully containerize 3 applications using Docker"],
+    "jobRoleDevelopment": {
+      "role": "Cloud Engineer",
+      "responsibilities": [
+        "Ensure smooth cloud deployment",
+        "Monitor and maintain cloud infrastructure"
+      ]
+    }
+  },
+  "Milestone 4": {
+    "timeline": {
+      "startDate": "01-06-2025",
+      "endDate": "01-07-2025",
+      "durationMonths": 1
+    },
+    "focusArea": "Leadership and Mentorship",
+    "goal": "Start taking on leadership responsibilities and mentoring junior developers",
+    "keyActivities": [
+      "Lead small team projects",
+      "Mentor junior developers in your team",
+      "Organize knowledge-sharing sessions"
+    ],
+    "measurableOutcomes": [
+      "Successfully lead 2 small projects",
+      "Mentor at least 2 junior developers"
+    ],
+    "learningResources": {
+      "courses": ["Leadership for Developers", "Agile Project Management"],
+      "books": ["Radical Candor", "The Lean Startup"],
+      "tools": ["Trello", "Slack", "Jira"]
+    },
+    "kpis": ["Lead 2 successful projects", "Mentor at least 3 junior developers"],
+    "jobRoleDevelopment": {
+      "role": "Team Lead",
+      "responsibilities": [
+        "Guide junior team members",
+        "Manage project timelines and deliverables"
+      ]
+    }
+  },
+  "Milestone 5": {
+    "timeline": {
+      "startDate": "01-07-2025",
+      "endDate": "01-08-2025",
+      "durationMonths": 1
+    },
+    "focusArea": "Advanced Database Management",
+    "goal": "Master advanced database design and optimization techniques",
+    "keyActivities": [
+      "Optimize database queries for better performance",
+      "Learn about indexing, joins, and advanced SQL features",
+      "Work on a project with MongoDB or Firebase"
+    ],
+    "measurableOutcomes": [
+      "Optimize 5 SQL queries for performance",
+      "Create an efficient MongoDB database schema"
+    ],
+    "learningResources": {
+      "courses": ["Advanced SQL for Developers", "MongoDB for Developers"],
+      "books": ["SQL Performance Explained", "MongoDB in Action"],
+      "tools": ["MySQL Workbench", "MongoDB Atlas"]
+    },
+    "kpis": ["Optimize 10 database queries", "Create and deploy a MongoDB database project"],
+    "jobRoleDevelopment": {
+      "role": "Database Developer",
+      "responsibilities": [
+        "Design efficient database schemas",
+        "Ensure database optimization and scaling"
+      ]
+    }
+  },
+all 12 milestones + resume in given format `;
+    const response = await AIResume(prompt);
+    console.log("ai response", response);
+
     // console.log("before save");
     newUser.save();
     // console.log("after save");
@@ -326,7 +492,7 @@ const userRegister = async (req, res) => {
       data: newUser,
     });
   } catch (error) {
-    // console.log("error", error);
+    console.log("error", error);
     return res.json({
       status: 500,
       message: "Internal server error",
