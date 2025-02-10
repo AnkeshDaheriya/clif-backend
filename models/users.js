@@ -3,12 +3,12 @@ const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema(
   {
     // Basic Information
-    firstName: {
+    firstname: {
       type: String,
       required: true,
       trim: true,
     },
-    lastName: {
+    lastname: {
       type: String,
       required: false, // Make optional
       trim: true,
@@ -21,9 +21,9 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      // required: function () {
-      //   return !this.googleAuth; // Required only if not using Google login
-      // },
+      required: function () {
+        return !this.googleAuth; // Required only if not using Google login
+      },
       trim: true,
     },
     googleAuth: {
@@ -125,16 +125,6 @@ const userSchema = new mongoose.Schema(
       type: String, // Store the file path/URL
       required: false, // Make optional
       trim: true,
-    },
-
-    // Verification Fields
-    otp: {
-      type: String,
-      trim: true,
-    },
-    otpVerified: {
-      type: Boolean,
-      default: false,
     },
 
     // Status Fields
