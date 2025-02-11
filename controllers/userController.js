@@ -340,7 +340,7 @@ const userRegister = async (req, res) => {
     console.log("mileStone starts here");
     console.dir(mileStoneData, { depth: null });
     newUser.save();
-
+   
     return res.json({
       status: 201,
       message: "User Registered success",
