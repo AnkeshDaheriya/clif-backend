@@ -312,12 +312,12 @@ const userRegister = async (req, res) => {
       fileUpload: uploadFileLocation,
     });
 
-    // console.log("uploadFileLocation",ss);
+    console.log("uploadFileLocation");
     const resumeText = await uploadResume(req, res);
-    console.log("Resume Text", resumeText.extractedText);
-    // console.log("before save");
+    console.log("Resume Text", resumeText.extractedText, careerPlan.careerPlan);
+    console.log("before save");
     newUser.save();
-    // console.log("after save");
+    console.log("after save");
 
     return res.json({
       status: 201,
