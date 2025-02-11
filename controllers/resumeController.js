@@ -23,8 +23,7 @@ const resumeUpload = async (req, res) => {
 
     // OpenAI Setup with API Key from Environment Variables
     const openai = new OpenAI({
-      apiKey:
-        "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", // Use environment variable
+      apiKey: process.env.OPEN_API_KEY, // Use environment variable
       dangerouslyAllowBrowser: true,
     });
 
@@ -72,7 +71,7 @@ const resumeUpload = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.log("OpenAI API Key:", process.env.OPENAI_API_KEY);
+    // console.log("OpenAI API Key:", process.env.process.env.OPEN_API_KEY);
 
     console.error("Error processing resume:", error);
     return res.status(500).json({
