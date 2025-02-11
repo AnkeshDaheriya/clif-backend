@@ -1,83 +1,32 @@
-require("dotenv").config();
-const OpenAI = require("openai");
 const { textExtraction } = require("../helper/resumeTextParser.js");
-const fs = require("fs");
-
+// add comment to push code
 const resumeUpload = async (req, res) => {
-  if (
-    !req.files ||
-    !req.files.fileUpload ||
-    req.files.fileUpload.length === 0
-  ) {
-    return res.status(400).json({
+  if (!req.files) {
+    return {
+      status: 400,
       message: "No file was uploaded!",
       success: false,
-    });
+    };
   }
 
-  const fileLocation = `public/resume_files/${req.files.fileUpload[0].originalname}`;
+  const fileLocation = `public/resume_files/${req.files.fileUpload[0].originalname}`; // Add a slash before the filename
+  // console.log("$fileName", fileLocation);
 
   try {
-    // Extract text from resume
     const extractedText = await textExtraction(fileLocation);
-
-    // OpenAI Setup with API Key from Environment Variables
-    const openai = new OpenAI({
-      apiKey: process.env.OPEN_API_KEY, // Use environment variable
-      dangerouslyAllowBrowser: true,
-    });
-
-    // Structured Prompt for AI to analyze 1-year career growth plan
-    const prompt = `
-      Based on the following extracted resume text, generate a career growth plan for the next 1 year.
-      
-      **Resume Text:** 
-      ${extractedText}
-
-      **Expected Output in JSON Format:**
-      {
-        "Career_Goals": "What should be the key focus areas for the candidate in the next 1 year?",
-        "Skill_Enhancement": "Which new skills should they learn to stay competitive?",
-        "Certifications": "Recommended certifications for career advancement.",
-        "Industry_Trends": "Latest trends relevant to their field.",
-        "Networking_Strategy": "How should they expand their professional network?",
-        "Job_Opportunities": "Potential job roles they should target.",
-        "Workshops_And_Conferences": "Recommended events for learning & networking."
-      }
-    `;
-
-    // Calling OpenAI API
-    const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: prompt }],
-      max_tokens: 1500,
-    });
-
-    let careerPlan = null;
-
-    if (response.choices && response.choices.length > 0) {
-      careerPlan = JSON.parse(response.choices[0].message.content);
-    } else {
-      return res.status(500).json({
-        message: "No response from OpenAI API.",
-        success: false,
-      });
-    }
-
-    return res.status(200).json({
-      message: "Resume analyzed successfully.",
+    // console.log(extractedText);
+    return {
+      message: "Extracted text",
       extractedText: extractedText,
-      careerPlan: careerPlan,
       success: true,
-    });
+    };
   } catch (error) {
-    // console.log("OpenAI API Key:", process.env.process.env.OPEN_API_KEY);
-
-    console.error("Error processing resume:", error);
-    return res.status(500).json({
-      message: "Error processing resume",
+    console.error("Error extracting text:", error);
+    return {
+      status: 500,
+      message: "Error extracting text",
       success: false,
-    });
+    };
   }
 };
 
