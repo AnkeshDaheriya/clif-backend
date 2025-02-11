@@ -3,7 +3,12 @@ const prompt = {
     name: "John Doe",
     email: "john.doe@example.com",
     phone: "+91-XXXXXXXXXX",
-    location: "Mumbai, Maharashtra, India",
+    location: {
+      city : 'Mumbai',
+      state : 'Maharashtra',
+      country : 'India'
+    },
+    DOB : '01/01/2001',
     linkedin: "https://linkedin.com/in/johndoe",
     github: "https://github.com/johndoe",
     portfolio: "https://johndoe.dev",
@@ -11,11 +16,9 @@ const prompt = {
   summary:
     "Software Developer with 3+ years of experience specializing in web development, Node.js, React.js, and cloud services.",
   skills: {
-    frontend: ["HTML", "CSS", "JavaScript", "React.js", "Angular"],
-    backend: ["Node.js", "Express", "Python", "Django"],
-    database: ["MySQL", "PostgreSQL", "MongoDB"],
-    devops_tools: ["Git", "Docker", "Jenkins", "Nginx"],
-    other: ["API Development", "Web Scraping", "Cloud Hosting"],
+    technical_skills : ["all technical skills go here"],
+    nontechnical_skills : ["all nontechnical skills go here"],
+    other: ["all other skills go here"],
   },
   experience: [
     {
@@ -23,7 +26,7 @@ const prompt = {
       company: "Tech Solutions Inc.",
       location: "Delhi",
       start_date: "2023-05-01",
-      end_date: "Present",
+      end_date: "Present/ if present in resume ",
       responsibilities: [
         "Developed scalable APIs and microservices using Node.js.",
         "Optimized web app performance by refactoring existing codebase.",
@@ -44,6 +47,11 @@ const prompt = {
       ],
     },
   ],
+  highestEducation  : {
+    degree: "Master of Technology (M.Tech) in Computer Science",
+    university: "PQR University",
+    year: "2023",
+  },
   education: [
     {
       degree: "Bachelor of Technology (B.Tech) in Computer Science",
@@ -55,6 +63,7 @@ const prompt = {
       university: "ABC School",
       year: "2017",
     },
+    'education details in descending order'
   ],
   projects: [
     {

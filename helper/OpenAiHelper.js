@@ -16,7 +16,7 @@ const GenerateResumeData = async (prompt) => {
     return (resp.choices[0].message.content)
   } catch (error) {
     console.error("Error with OpenAI:", error);
-    return { error: error };
+    return { error: error };  
   }
 };
 

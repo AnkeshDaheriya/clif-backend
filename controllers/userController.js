@@ -267,15 +267,16 @@ const userRegister = async (req, res) => {
         message: "Invalid image format. Please upload JPG, JPEG or PNG",
         success: false,
       });
+
+      if (req.files.headshot[0].size > maxImageSize) {
+        return res.status(400).json({
+          status: 400,
+          message: "Image size should be less than 5MB",
+          success: false,
+        });
+      }
     }
-    if (req.files.headshot[0].size > maxImageSize) {
-      return res.status(400).json({
-        status: 400,
-        message: "Image size should be less than 5MB",
-        success: false,
-      });
-    }
-    console.log("test work");
+    // console.log("test work");
     // If all validations pass, proceed with user creation
     const existingUser = await userModel.findOne({ email });
     if (existingUser) {
@@ -315,38 +316,12 @@ const userRegister = async (req, res) => {
 
     console.log("uploadFileLocation");
     const resumeText = await uploadResume(req, res);
-    // console.log("Resume Text", resumeText.extractedText);
-    // console.log("before save");
-    newUser.save();
-    // console.log("after save");
-    return res.json({
-      status: 201,
-      message: "User Registered success",
-      success: true,
-      data: newUser,
-    });
-  } catch (error) {
-    console.log("error", error);
-    return res.json({
-      status: 500,
-      message: "Internal server error",
-      success: false,
-    });
-  }
-};
-
-const mileStones = async (data) => {
-  try {
-    const prompt = `Create a detailed career growth plan for an individual with the current resume and current skill set in the following json format – 
-${data.resumeData},
-This individua, aspires to have a desired job in desired location and with desired employer in the following variables 
-role ${data.desired_employer} in ${data.desired_employer} in location ${data.desiredLocationCountry},${data.desiredLocationCity}.
-The career path should be detaild and must be broken down into exact 12 milestones. Each milestone should represent significant 
-steps in the user's professional development, including skill enhancement, certifications, learning activities, key actions, and job role progression, 
-non technical skill inhancement also, book reading, professional course, or anything needed needed to achieve the desired career.  Also tell us the realistic 
-target date (tentative also would be fine) by when the individual can achive the desired career.,
-goal will be achieved by : Date 
-mileStoes : [
+    console.log("Resume Text", resumeText.extractedText.pages);
+    const prompt = `Extract all details of my resume and,
+Create a detailed career growth plan for an individual over the next 12 months in role ${desired_employer} in ${desired_employer} in location ${desiredLocationCountry},${desiredLocationCity}, broken down into 12 milestones. Each milestone should represent a significant step in the user's professional development, including skill enhancement, certifications, learning activities, key actions, and job role progression.
+${resumeText.extractedText.pages},
+Return my resume's details in this format ${promptFormat} and exactly 12 career growth milestones in the following JSON format:
+mileStoes : {
   "Milestone 1": {
     "timeline": {
       "startDate": "DD-MM-YYYY",
