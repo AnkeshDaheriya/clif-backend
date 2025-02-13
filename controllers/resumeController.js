@@ -1,5 +1,5 @@
 const { textExtraction } = require("../helper/resumeTextParser.js");
-// add comment to push code
+
 const resumeUpload = async (req, res) => {
   if (!req.files) {
     return {
