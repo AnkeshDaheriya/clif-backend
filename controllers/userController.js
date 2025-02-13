@@ -1,6 +1,8 @@
 // const firebaseAdmin = require("firebase-admin");
 const bcrypt = require("bcrypt");
 const userModel = require("../models/users");
+const resumeModel = require("../models/resumeModel");
+
 const authService = require("../config/authService.js");
 const { ErrorHandler } = require("../helper/error");
 const { textExtraction } = require("../helper/resumeTextParser.js");
@@ -323,9 +325,71 @@ const userRegister = async (req, res) => {
     const response = await AIResume(prompt);
 
     const J_data = await JSON.parse(response);
+    const resumeData = {
+      personal_info: {
+        name: `${J_data["Personal Information"]?.Name || "Unknown"} ${
+          J_data["Personal Information"]?.Name ? "" : "Unknown"
+        }`,
+        email: J_data["Personal Information"]?.Email || "Not provided",
+        phone: J_data["Personal Information"]?.Phone || "Not provided",
+        location: J_data["Contact Information"]?.Address || "Not provided", // Assuming address is available here
+        linkedin: J_data.linkedinUrl || "Not provided", // If available
+        github: J_data.github || "Not provided", // If available
+        portfolio: J_data.portfolio || "Not provided", // If available
+      },
+      summary: J_data.summary || "No summary available", // Ensure there is always a fallback summary
+      skills: {
+        frontend:
+          J_data["Technical Skills"]?.filter((skill) =>
+            ["HTML", "CSS", "JavaScript"].includes(skill)
+          ) || [],
+        backend:
+          J_data["Technical Skills"]?.filter((skill) =>
+            ["C", "C++", "C#"].includes(skill)
+          ) || [],
+        database: [], // Add database skills if available
+        devops_tools: [], // Add DevOps tools if mentioned
+        other: [], // Add other skills if available
+      },
+      experience:
+        J_data["Internships & Trainings"]?.map((exp) => ({
+          title: exp.Title || "Unknown Title",
+          company: exp.Company || "Unknown Company",
+          location: "", // Add location if available
+          start_date: new Date(), // Map with actual date if mentioned
+          end_date: null, // Map with actual end date if mentioned
+          responsibilities: [], // Add responsibilities if available
+        })) || [],
+      education:
+        J_data["Education"]?.map((edu) => ({
+          degree: edu.Degree || "Unknown Degree",
+          university: edu.Institution || "Unknown University",
+          year: edu.Year || "Unknown Year",
+        })) || [],
+      projects: [], // Add projects if available
+      certifications: [], // Add certifications if available
+      interests: [], // Add interests if available
+      declaration: J_data.Declaration || "No declaration provided", // Ensure the declaration is included
+    };
+
+    console.log("Prepared resume data:", resumeData);
+
+    // Now, save the resume data to the database
+    const resume = new resumeModel(resumeData);
+    resume
+      .save()
+      .then(() => {
+        console.log("Resume saved successfully:", resume);
+      })
+      .catch((error) => {
+        console.error("Error saving resume:", error);
+      });
+
+    // Save the resume to the database
+
     console.log("resume starts here");
     console.dir(J_data, { depth: null });
-
+    // resume.save();
     const data = {
       resumeData: J_data,
       desired_employer,
@@ -338,6 +402,7 @@ const userRegister = async (req, res) => {
     const mileStoneData = await JSON.parse(mileStone.trim(" "));
     console.log("mileStone starts here");
     console.dir(mileStoneData, { depth: null });
+
     newUser.save();
 
     return res.json({
@@ -523,7 +588,7 @@ mileStoes : [
       ]
     }
   },
-all 12 milestones without missing any single milestone in json format also give me an estimate date of when can i achieve my goal in json format`;
+all 8 milestones without missing any single milestone in json format also give me an estimate date of when can i achieve my goal in json format`;
     const mileStoneData = await AIResume(prompt);
     return mileStoneData;
   } catch (error) {
