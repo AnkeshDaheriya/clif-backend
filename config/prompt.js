@@ -4,11 +4,11 @@ const prompt = {
     email: "john.doe@example.com",
     phone: "+91-XXXXXXXXXX",
     location: {
-      city : 'Mumbai',
-      state : 'Maharashtra',
-      country : 'India'
+      city: "Mumbai",
+      state: "Maharashtra",
+      country: "India",
     },
-    DOB : '01/01/2001',
+    DOB: "01/01/2001",
     linkedin: "https://linkedin.com/in/johndoe",
     github: "https://github.com/johndoe",
     portfolio: "https://johndoe.dev",
@@ -16,8 +16,8 @@ const prompt = {
   summary:
     "Software Developer with 3+ years of experience specializing in web development, Node.js, React.js, and cloud services.",
   skills: {
-    technical_skills : ["all technical skills go here"],
-    nontechnical_skills : ["all nontechnical skills go here"],
+    technical_skills: ["all technical skills go here"],
+    nontechnical_skills: ["all nontechnical skills go here"],
     other: ["all other skills go here"],
   },
   experience: [
@@ -47,7 +47,7 @@ const prompt = {
       ],
     },
   ],
-  highestEducation  : {
+  highestEducation: {
     degree: "Master of Technology (M.Tech) in Computer Science",
     university: "PQR University",
     year: "2023",
@@ -63,7 +63,7 @@ const prompt = {
       university: "ABC School",
       year: "2017",
     },
-    'education details in descending order'
+    "education details in descending order",
   ],
   projects: [
     {
@@ -94,4 +94,4 @@ const prompt = {
   interests: ["Photography", "Gaming", "Traveling"],
 };
 
-module.exports.promptFormat = prompt
+module.exports.promptFormat = prompt;

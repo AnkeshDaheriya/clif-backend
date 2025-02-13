@@ -1,7 +1,9 @@
-const exp = require("express");
-const router = exp.Router();
-const { upload } = require("../helper/pdfUpload");
+const express = require("express");
+const router = express.Router();
+const { upload } = require("../helper/pdfUpload"); // Assuming this is the file handling logic
+const { singleResumeUpload } = require("../controllers/singleResumeController"); // The controller function
 
-// router.post("/upload", upload.single("resume"), resume.uploadResume);
+// POST route to handle resume upload
+router.post("/upload", upload.single("resume"), singleResumeUpload);
 
 module.exports = router;
