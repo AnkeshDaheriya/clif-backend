@@ -13,10 +13,10 @@ const GenerateResumeData = async (prompt) => {
       messages: [{ role: "user", content: prompt }],
     });
     // console.log(resp.choices[0].message.content);
-    return (resp.choices[0].message.content)
+    return resp.choices[0].message.content;
   } catch (error) {
     console.error("Error with OpenAI:", error);
-    return { error: error };  
+    return { error: error };
   }
 };
 

@@ -1,12 +1,8 @@
 const { textExtraction } = require("../helper/resumeTextParser.js");
-<<<<<<< HEAD
 const { AIResume } = require("../helper/OpenAiHelper.js");
 const { promptFormat } = require("../config/prompt.js");
 // add comment to push code
-=======
-
->>>>>>> 90fda61a17782cb4efd37b80fc56526df05a60fc
-const resumeUpload = async (req, res) => {
+const singleResumeUpload = async (req, res) => {
   if (!req.file) {
     return res.json({
       status: 400,
@@ -15,7 +11,7 @@ const resumeUpload = async (req, res) => {
     });
   }
   // console.log(req.file);
-  const fileLocation = public/resume_files/${req.file.originalname}; // Add a slash before the filename
+  const fileLocation = `public/resume_files/${req.file.originalname}`; // Add a slash before the filename
   // console.log("$fileName", fileLocation);
 
   try {
@@ -45,4 +41,4 @@ const resumeUpload = async (req, res) => {
   }
 };
 
-module.exports.uploadResume = resumeUpload;
+module.exports.singleResumeUpload = singleResumeUpload;
