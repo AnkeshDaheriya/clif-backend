@@ -7,6 +7,7 @@ const { textExtraction } = require("../helper/resumeTextParser.js");
 const { uploadResume } = require("./resumeController.js");
 const { AIResume } = require("../helper/OpenAiHelper.js");
 const { promptFormat } = require("../config/prompt.js");
+const Milestone = require("../models/mileStone.js");
 
 const userRegister = async (req, res) => {
   try {
@@ -315,19 +316,10 @@ const userRegister = async (req, res) => {
 
     // console.log("uploadFileLocation",ss);
     const resumeText = await uploadResume(req, res);
-    // console.log("Resume Text", resumeText.extractedText.pages);
-    const prompt = `Extract all the key details from resume text ${resumeText.extractedText?.pages} 
-                    and give all the resume details in ${promptFormat} in json data keep all technical skills in a array and 
-                    non technical skills in a array and all other skills in a array all within skills section  `;
-
-    const response = await AIResume(prompt);
-
-    const J_data = await JSON.parse(response);
-    console.log("resume starts here");
-    console.dir(J_data, { depth: null });
+    console.dir(resumeText.extractedText, { depth: null });
 
     const data = {
-      resumeData: J_data,
+      resumeData: resumeText.extractedText,
       desired_employer,
       desiredLocationCountry,
       desiredLocationCity,
@@ -336,9 +328,14 @@ const userRegister = async (req, res) => {
     const mileStone = await mileStones(data);
     // console.log(mileStone);
     const mileStoneData = await JSON.parse(mileStone.trim(" "));
-    console.log("mileStone starts here");
+    // console.log("mileStone starts here");
     console.dir(mileStoneData, { depth: null });
     newUser.save();
+    const newMileStones = new Milestone({
+      userID: newUser._id, 
+      ...mileStoneData
+    });
+    newMileStones.save();
 
     return res.json({
       status: 201,
@@ -362,13 +359,13 @@ const mileStones = async (data) => {
 ${data.resumeData},
 This individua, aspires to have a desired job in desired location and with desired employer in the following variables 
 role ${data.desired_employer} in ${data.desired_employer} in location ${data.desiredLocationCountry},${data.desiredLocationCity}.
-The career path should be detaild and must be broken down into exact 12 milestones. Each milestone should represent significant 
+The career path should be detaild and must be broken down into exact 8 milestones. Each milestone should represent significant 
 steps in the user's professional development, including skill enhancement, certifications, learning activities, key actions, and job role progression, 
 non technical skill inhancement also, book reading, professional course, or anything needed needed to achieve the desired career.  Also tell us the realistic 
 target date (tentative also would be fine) by when the individual can achive the desired career.,
 goal will be achieved by : Date 
 mileStoes : [
-  "Milestone 1": {
+  "1": {
     "timeline": {
       "startDate": "DD-MM-YYYY",
       "endDate": "DD-MM-YYYY",
@@ -399,7 +396,7 @@ mileStoes : [
       ]
     }
   },
-  "Milestone 2": {
+  "2": {
     "timeline": {
       "startDate": "01-04-2025",
       "endDate": "01-05-2025",
@@ -430,7 +427,7 @@ mileStoes : [
       ]
     }
   },
-  "Milestone 3": {
+  "3": {
     "timeline": {
       "startDate": "01-05-2025",
       "endDate": "01-06-2025",
@@ -461,7 +458,7 @@ mileStoes : [
       ]
     }
   },
-  "Milestone 4": {
+  "4": {
     "timeline": {
       "startDate": "01-06-2025",
       "endDate": "01-07-2025",
@@ -492,7 +489,7 @@ mileStoes : [
       ]
     }
   },
-  "Milestone 5": {
+  "5": {
     "timeline": {
       "startDate": "01-07-2025",
       "endDate": "01-08-2025",
@@ -523,7 +520,7 @@ mileStoes : [
       ]
     }
   },
-all 12 milestones without missing any single milestone in json format also give me an estimate date of when can i achieve my goal in json format`;
+all 8 milestones without missing any single milestone in json format also give me an estimate date of when can i achieve my goal in json format`;
     const mileStoneData = await AIResume(prompt);
     return mileStoneData;
   } catch (error) {
