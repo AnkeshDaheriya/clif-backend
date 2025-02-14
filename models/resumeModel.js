@@ -2,15 +2,15 @@ const mongoose = require("mongoose");
 
 const resumeSchema = new mongoose.Schema({
   personal_info: {
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    phone: { type: String, required: true },
+    name: { type: String, required: false },
+    email: { type: String, required: false, unique: true },
+    phone: { type: String, required: false },
     location: { type: String },
     linkedin: { type: String },
     github: { type: String },
     portfolio: { type: String },
   },
-  summary: { type: String, required: true },
+  summary: { type: String, required: false },
   skills: {
     frontend: [{ type: String }],
     backend: [{ type: String }],
@@ -20,24 +20,24 @@ const resumeSchema = new mongoose.Schema({
   },
   experience: [
     {
-      title: { type: String, required: true },
-      company: { type: String, required: true },
+      title: { type: String, required: false },
+      company: { type: String, required: false },
       location: { type: String },
-      start_date: { type: Date, required: true },
+      start_date: { type: Date, required: false },
       end_date: { type: Date },
       responsibilities: [{ type: String }],
     },
   ],
   education: [
     {
-      degree: { type: String, required: true },
-      university: { type: String, required: true },
-      year: { type: String, required: true },
+      degree: { type: String, required: false },
+      university: { type: String, required: false },
+      year: { type: String, required: false },
     },
   ],
   projects: [
     {
-      title: { type: String, required: true },
+      title: { type: String, required: false },
       technologies: [{ type: String }],
       description: { type: String },
     },
