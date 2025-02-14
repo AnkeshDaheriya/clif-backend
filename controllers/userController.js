@@ -319,21 +319,25 @@ const userRegister = async (req, res) => {
     const resumeText = await uploadResume(req, res);
     // console.log("Resume Text", resumeText.extractedText.pages);
     const prompt = `Extract all the key details from resume text ${resumeText.extractedText?.pages} 
-                    and give all the resume details in ${promptFormat} in json data keep all technical skills in a array and 
+                    and give and give all the resume details in the following JSON format: ${JSON.stringify(
+      promptFormat,
+      null,
+      2
+    )}. in json data keep all technical skills in a array and 
                     non technical skills in a array and all other skills in a array all within skills section  `;
 
     const response = await AIResume(prompt);
 
     const J_data = await JSON.parse(response);
+    console.log("#Json DATA", J_data);
     const resumeData = {
       personal_info: {
-        name: `${J_data["Personal Information"]?.Name || "Unknown"} ${
-          J_data["Personal Information"]?.Name ? "" : "Unknown"
-        }`,
-        email: J_data["Personal Information"]?.Email || "Not provided",
-        phone: J_data["Personal Information"]?.Phone || "Not provided",
-        location: J_data["Contact Information"]?.Address || "Not provided", // Assuming address is available here
-        linkedin: J_data.linkedinUrl || "Not provided", // If available
+        name: `${J_data?.personal_info?.name || "Unknown"} ${J_data["Personal Information"]?.name ? "" : "Unknown"
+          }`,
+        email: J_data?.personal_info?.email || J_data["Personal Information"]?.email || "Not provided",
+        phone: J_data?.personal_info?.phone || J_data["Personal Information"]?.phone || "Not provided",
+        location: J_data?.personal_info?.location.city || J_data["Contact Information"]?.address || "Not provided", // Assuming address is available here
+        linkedin: J_data?.personal_info?.linkedin || J_data.linkedinUrl || "Not provided", // If available
         github: J_data.github || "Not provided", // If available
         portfolio: J_data.portfolio || "Not provided", // If available
       },
