@@ -1,42 +1,47 @@
 const { textExtraction } = require("../helper/resumeTextParser.js");
 const { AIResume } = require("../helper/OpenAiHelper.js");
 const { promptFormat } = require("../config/prompt.js");
-// add comment to push code
+
 const singleResumeUpload = async (req, res) => {
   if (!req.file) {
-    return res.json({
-      status: 400,
+    return res.status(400).json({
       message: "No file was uploaded!",
       success: false,
     });
   }
-  // console.log(req.file);
-  const fileLocation = `public/resume_files/${req.file.originalname}`; // Add a slash before the filename
-  // console.log("$fileName", fileLocation);
+
+  const fileLocation = `public/resume_files/${req.file.originalname}`;
 
   try {
     const extractedText = await textExtraction(fileLocation);
-    // console.log(extractedText);
-    const prompt = `Extract all the key details from resume text ${extractedText?.pages} 
-                    and give all the resume details in ${promptFormat} in json data keep all technical skills in a array and 
-                    non technical skills in a array and all other skills in a array all within skills section  `;
+
+    const prompt = `Extract all the key details from resume text: ${
+      extractedText?.pages
+    } 
+    and give all the resume details in the following JSON format: ${JSON.stringify(
+      promptFormat,
+      null,
+      2
+    )}. 
+    Ensure that all technical skills are in an array, non-technical skills are in an array, 
+    and all other skills are in an array within the skills section.`;
 
     const response = await AIResume(prompt);
+    const parsedData = JSON.parse(response);
 
-    const J_data = await JSON.parse(response);
-    console.log("resume starts here");
-    console.dir(J_data, { depth: null });
+    console.log("Extracted Resume Data:", parsedData);
+
     return res.json({
-      message: "Extracted text",
-      extractedText: J_data,
+      message: "Resume details extracted successfully",
+      extractedText: parsedData,
       success: true,
     });
   } catch (error) {
     console.error("Error extracting text:", error);
-    return res.json({
-      status: 500,
+    return res.status(500).json({
       message: "Error extracting text",
       success: false,
+      error: error.message,
     });
   }
 };
