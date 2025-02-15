@@ -8,6 +8,7 @@ const { ConnectDB } = require("./config/db.js");
 const uploadRoutes = require("./routes/resumeRoutes.js");
 const authRoutes = require("./routes/authRoute.js");
 const otpRoutes = require("./routes/otpRoute.js");
+const { mileStoneRouter } = require("./routes/mileStone.js");
 
 const port = 5000;
 var app = express();
@@ -32,7 +33,7 @@ ConnectDB();
 app.use("/auth", authRoutes);
 app.use("/resume", uploadRoutes);
 app.use("/auth", otpRoutes);
-
+app.use("/mileStone", mileStoneRouter);
 // ✅ Test Route (Check if the server is running)
 app.get("/", (req, res) => {
   res.send("Server is running...");

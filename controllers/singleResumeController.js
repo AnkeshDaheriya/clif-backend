@@ -11,7 +11,6 @@ const singleResumeUpload = async (req, res) => {
   }
 
   const fileLocation = `public/resume_files/${req.file.originalname}`;
-
   try {
     const extractedText = await textExtraction(fileLocation);
 
