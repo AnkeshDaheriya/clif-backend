@@ -318,12 +318,14 @@ const userRegister = async (req, res) => {
     // console.log("uploadFileLocation",ss);
     const resumeText = await uploadResume(req, res);
     // console.log("Resume Text", resumeText.extractedText.pages);
-    const prompt = `Extract all the key details from resume text ${resumeText.extractedText?.pages} 
+    const prompt = `Extract all the key details from resume text ${
+      resumeText.extractedText?.pages
+    } 
                     and give and give all the resume details in the following JSON format: ${JSON.stringify(
-      promptFormat,
-      null,
-      2
-    )}. in json data keep all technical skills in a array and 
+                      promptFormat,
+                      null,
+                      2
+                    )}. in json data keep all technical skills in a array and 
                     non technical skills in a array and all other skills in a array all within skills section  `;
 
     const response = await AIResume(prompt);
@@ -332,12 +334,25 @@ const userRegister = async (req, res) => {
     console.log("#Json DATA", J_data);
     const resumeData = {
       personal_info: {
-        name: `${J_data?.personal_info?.name || "Unknown"} ${J_data["Personal Information"]?.name ? "" : "Unknown"
-          }`,
-        email: J_data?.personal_info?.email || J_data["Personal Information"]?.email || "Not provided",
-        phone: J_data?.personal_info?.phone || J_data["Personal Information"]?.phone || "Not provided",
-        location: J_data?.personal_info?.location.city || J_data["Contact Information"]?.address || "Not provided", // Assuming address is available here
-        linkedin: J_data?.personal_info?.linkedin || J_data.linkedinUrl || "Not provided", // If available
+        name: `${J_data?.personal_info?.name || "Unknown"} ${
+          J_data["Personal Information"]?.name ? "" : "Unknown"
+        }`,
+        email:
+          J_data?.personal_info?.email ||
+          J_data["Personal Information"]?.email ||
+          "Not provided",
+        phone:
+          J_data?.personal_info?.phone ||
+          J_data["Personal Information"]?.phone ||
+          "Not provided",
+        location:
+          J_data?.personal_info?.location.city ||
+          J_data["Contact Information"]?.address ||
+          "Not provided", // Assuming address is available here
+        linkedin:
+          J_data?.personal_info?.linkedin ||
+          J_data.linkedinUrl ||
+          "Not provided", // If available
         github: J_data.github || "Not provided", // If available
         portfolio: J_data.portfolio || "Not provided", // If available
       },
@@ -402,10 +417,26 @@ const userRegister = async (req, res) => {
     };
 
     const mileStone = await mileStones(data);
-    // console.log(mileStone);
-    const mileStoneData = await JSON.parse(mileStone.trim(" "));
-    console.log("mileStone starts here");
-    console.dir(mileStoneData, { depth: null });
+    // Check if mileStone is already a string and needs parsing
+    if (typeof mileStone === "string") {
+      try {
+        // If it's a string, we can parse it
+        const sanitized = mileStone
+          .trim()
+          .replace(/[\r\n\t]/g, "") // Remove newlines, tabs
+          .replace(/:\s*X/g, ': "Unknown"') // Replace invalid `X` values
+          .replace(/'/g, '"'); // Convert single to double quotes if needed
+        const mileStoneData = JSON.parse(sanitized);
+        console.log("mileStone starts here");
+        console.dir(mileStoneData, { depth: null });
+      } catch (error) {
+        console.error("Error parsing JSON:", error);
+      }
+    } else {
+      // If mileStone is already an object, just use it directly
+      console.log("mileStone starts here");
+      console.dir(mileStone, { depth: null });
+    }
 
     newUser.save();
 
@@ -427,172 +458,287 @@ const userRegister = async (req, res) => {
 
 const mileStones = async (data) => {
   try {
-    const prompt = `Create a detailed career growth plan for an individual with the current resume and current skill set in the following json format – 
-${data.resumeData},
-This individua, aspires to have a desired job in desired location and with desired employer in the following variables 
-role ${data.desired_employer} in ${data.desired_employer} in location ${data.desiredLocationCountry},${data.desiredLocationCity}.
-The career path should be detaild and must be broken down into exact 12 milestones. Each milestone should represent significant 
-steps in the user's professional development, including skill enhancement, certifications, learning activities, key actions, and job role progression, 
-non technical skill inhancement also, book reading, professional course, or anything needed needed to achieve the desired career.  Also tell us the realistic 
-target date (tentative also would be fine) by when the individual can achive the desired career.,
-goal will be achieved by : Date 
-mileStoes : [
-  "Milestone 1": {
-    "timeline": {
-      "startDate": "DD-MM-YYYY",
-      "endDate": "DD-MM-YYYY",
-      "durationMonths": number
-    },
-    "focusArea": "Skill Development - Frontend and Backend",
-    "goal": "Master React.js, Laravel, and Full-stack Development",
-    "keyActivities": [
-      "Complete advanced React.js and Laravel courses",
-      "Build a personal project integrating React and Laravel",
-      "Learn state management with Redux"
-    ],
-    "measurableOutcomes": [
-      "Complete 3 React projects",
-      "Build a full-stack web application with authentication"
-    ],
-    "learningResources": {
-      "courses": ["React - Advanced Concepts", "Master Laravel"],
-      "books": ["Learning React", "Laravel Up & Running"],
-      "tools": ["VS Code", "GitHub", "Docker"]
-    },
-    "kpis": ["Complete 2 major React applications", "Learn and apply Redux in a project"],
-    "jobRoleDevelopment": {
-      "role": "Full Stack Developer",
-      "responsibilities": [
-        "Develop advanced user interfaces",
-        "Work with backend and frontend integration"
-      ]
-    }
-  },
-  "Milestone 2": {
-    "timeline": {
-      "startDate": "01-04-2025",
-      "endDate": "01-05-2025",
-      "durationMonths": 1
-    },
-    "focusArea": "Backend Development and API Integration",
-    "goal": "Strengthen skills in API development and backend technologies",
-    "keyActivities": [
-      "Learn advanced API development with Laravel",
-      "Work on integrating third-party APIs",
-      "Start a personal project that involves complex backend systems"
-    ],
-    "measurableOutcomes": [
-      "Create a RESTful API in Laravel",
-      "Integrate a payment gateway API (Stripe)"
-    ],
-    "learningResources": {
-      "courses": ["Advanced Laravel API Development", "Building APIs with Laravel"],
-      "books": ["API Design Patterns", "Modern PHP"],
-      "tools": ["Postman", "XAMPP", "Stripe API"]
-    },
-    "kpis": ["Complete 2 API integrations", "Develop a robust authentication system for APIs"],
-    "jobRoleDevelopment": {
-      "role": "Backend Developer",
-      "responsibilities": [
-        "Develop and maintain server-side logic",
-        "Integrate third-party APIs"
-      ]
-    }
-  },
-  "Milestone 3": {
-    "timeline": {
-      "startDate": "01-05-2025",
-      "endDate": "01-06-2025",
-      "durationMonths": 1
-    },
-    "focusArea": "Cloud Deployment and DevOps",
-    "goal": "Enhance skills in cloud deployment and DevOps tools like Docker and AWS",
-    "keyActivities": [
-      "Deploy applications on AWS EC2 and S3",
-      "Learn Docker and containerize existing projects",
-      "Explore AWS Lambda and serverless architecture"
-    ],
-    "measurableOutcomes": [
-      "Successfully deploy an app on AWS",
-      "Containerize 2 existing applications"
-    ],
-    "learningResources": {
-      "courses": ["AWS Certified Solutions Architect", "Docker for Developers"],
-      "books": ["AWS Up & Running", "Docker in Action"],
-      "tools": ["AWS CLI", "Docker Desktop"]
-    },
-    "kpis": ["Deploy 3 apps to AWS", "Successfully containerize 3 applications using Docker"],
-    "jobRoleDevelopment": {
-      "role": "Cloud Engineer",
-      "responsibilities": [
-        "Ensure smooth cloud deployment",
-        "Monitor and maintain cloud infrastructure"
-      ]
-    }
-  },
-  "Milestone 4": {
-    "timeline": {
-      "startDate": "01-06-2025",
-      "endDate": "01-07-2025",
-      "durationMonths": 1
-    },
-    "focusArea": "Leadership and Mentorship",
-    "goal": "Start taking on leadership responsibilities and mentoring junior developers",
-    "keyActivities": [
-      "Lead small team projects",
-      "Mentor junior developers in your team",
-      "Organize knowledge-sharing sessions"
-    ],
-    "measurableOutcomes": [
-      "Successfully lead 2 small projects",
-      "Mentor at least 2 junior developers"
-    ],
-    "learningResources": {
-      "courses": ["Leadership for Developers", "Agile Project Management"],
-      "books": ["Radical Candor", "The Lean Startup"],
-      "tools": ["Trello", "Slack", "Jira"]
-    },
-    "kpis": ["Lead 2 successful projects", "Mentor at least 3 junior developers"],
-    "jobRoleDevelopment": {
-      "role": "Team Lead",
-      "responsibilities": [
-        "Guide junior team members",
-        "Manage project timelines and deliverables"
-      ]
-    }
-  },
-  "Milestone 5": {
-    "timeline": {
-      "startDate": "01-07-2025",
-      "endDate": "01-08-2025",
-      "durationMonths": 1
-    },
-    "focusArea": "Advanced Database Management",
-    "goal": "Master advanced database design and optimization techniques",
-    "keyActivities": [
-      "Optimize database queries for better performance",
-      "Learn about indexing, joins, and advanced SQL features",
-      "Work on a project with MongoDB or Firebase"
-    ],
-    "measurableOutcomes": [
-      "Optimize 5 SQL queries for performance",
-      "Create an efficient MongoDB database schema"
-    ],
-    "learningResources": {
-      "courses": ["Advanced SQL for Developers", "MongoDB for Developers"],
-      "books": ["SQL Performance Explained", "MongoDB in Action"],
-      "tools": ["MySQL Workbench", "MongoDB Atlas"]
-    },
-    "kpis": ["Optimize 10 database queries", "Create and deploy a MongoDB database project"],
-    "jobRoleDevelopment": {
-      "role": "Database Developer",
-      "responsibilities": [
-        "Design efficient database schemas",
-        "Ensure database optimization and scaling"
-      ]
-    }
-  },
-all 8 milestones without missing any single milestone in json format also give me an estimate date of when can i achieve my goal in json format`;
+    // const prompt = `Create a detailed career growth plan for an individual with the current resume and current skill set in the following json format –
+    // ${data.resumeData},
+    // This individual aspires to have a desired job in the desired location and with the desired employer in the following variables:
+    // role ${data.desired_employer} in ${data.desired_employer} in location ${data.desiredLocationCountry},${data.desiredLocationCity}.
+    // The career path should be detailed and must be broken down into exact 12 milestones. Each milestone should represent significant
+    // steps in the user's professional development, including skill enhancement, certifications, learning activities, key actions, and job role progression,
+    // non-technical skill enhancement also, book reading, professional courses, or anything needed to achieve the desired career. Also, tell us the realistic
+    // target date (tentative also would be fine) by when the individual can achieve the desired career.
+    // Goal will be achieved by: Date
+    // Milestones: [
+    //   {
+    //     "Milestone 1": {
+    //       "Timeline": {
+    //         "Start Date": "Month YYYY",
+    //         "End Date": "Month YYYY",
+    //         "Duration (Months)": X
+    //       },
+    //       "Goals": {
+    //         "Primary Goal": "Gain foundational knowledge in {desired_role} through structured learning.",
+    //         "Measurable Goals": [
+    //           "Complete 5 technical courses",
+    //           "Earn 1 beginner-level certification",
+    //           "Read 2 industry-related books",
+    //           "Improve resume and LinkedIn profile"
+    //         ]
+    //       },
+    //       "KPIs": {
+    //         "Technical Course Completion Rate": "80%+",
+    //         "Certification Achievement": "1 foundational certification earned",
+    //         "Book Reading Progress": "2 books completed",
+    //         "LinkedIn Profile Optimization": "Profile strength: All-Star level"
+    //       },
+    //       "TechVerse": {
+    //         "What it Covers": "Expert-led video courses on tech stacks, frameworks, and industry tools.",
+    //         "Focus Areas": ["List relevant technologies from resume & industry standards"],
+    //         "Top 5 Relevant Technical Courses": ["List beginner-friendly courses"]
+    //       },
+    //       "ProVision": {
+    //         "What it Covers": "Communication, leadership, negotiation, and personal branding.",
+    //         "Focus Areas": ["Public Speaking, Collaboration, Leadership"],
+    //         "Top 5 Relevant Non-Technical Courses": ["List relevant soft skills courses"]
+    //       },
+    //       "BookVault": {
+    //         "What it Covers": "Industry-relevant books on coding, leadership, problem-solving, and career growth.",
+    //         "Focus Areas": ["Software Development, Problem-Solving, Leadership"],
+    //         "Recommended Books": {
+    //           "Technical Books": ["List 2 beginner-level books"],
+    //           "Non-Technical Book": "List 1 career development book"
+    //         }
+    //       },
+    //       "SkillForge": {
+    //         "What it Covers": "Global certifications like AWS, Google Cloud, PMP, CFA, etc.",
+    //         "Focus Areas": ["Cloud Computing, Web Development, DevOps"],
+    //         "Top 3 Certifications": ["List beginner-friendly certifications"]
+    //       },
+    //       "JobSphere": {
+    //         "What it Covers": "Real-time interview simulations, resume feedback, and personalized job-matching.",
+    //         "Focus Areas": ["Resume Building, LinkedIn Profile, Networking"],
+    //         "Key Activities": [
+    //           "Draft and refine resume",
+    //           "Create a LinkedIn profile",
+    //           "Attend career workshops",
+    //           "Research job market for {desired_role}",
+    //           "Practice self-introduction for interviews"
+    //         ]
+    //       },
+    //       "EventPulse": {
+    //         "What it Covers": "Industry talks, hackathons, networking events, and career fairs.",
+    //         "Focus Areas": ["Tech Conferences, Webinars, Hackathons"],
+    //         "Top 5 Events/Webinars": ["List 5 relevant industry events"]
+    //       },
+    //       "MentorLoop": {
+    //         "What it Covers": "Direct guidance from industry mentors, career coaching, and roadmap planning.",
+    //         "Focus Areas": ["1:1 Mentorship, Career Roadmap, Resume Review"],
+    //         "Key Activities": [
+    //           "Find and connect with an industry mentor",
+    //           "Schedule monthly mentorship sessions",
+    //           "Review career roadmap and receive feedback",
+    //           "Discuss long-term career strategy"
+    //         ]
+    //       },
+    //       "NetX": {
+    //         "What it Covers": "LinkedIn engagement, professional group participation, and collaborations.",
+    //         "Focus Areas": ["Networking, Blogging, Community Building"],
+    //         "Key Activities": [
+    //           "Increase LinkedIn connections by 50%",
+    //           "Engage with posts from industry experts",
+    //           "Join relevant tech groups and communities",
+    //           "Write 1 blog on a tech topic",
+    //           "Collaborate on an open-source project"
+    //         ]
+    //       }
+    //     },
+
+    //     "Milestone 2": {
+    //       "Timeline": { "...": "Advance to intermediate-level skills." },
+    //       "Goals": { "...": "Improve problem-solving and earn advanced certifications." },
+    //       "KPIs": { "...": "Measure certification completions and hands-on project progress." },
+    //       "TechVerse": { "...": "Include intermediate-level courses." },
+    //       "ProVision": { "...": "Develop strong leadership and communication skills." },
+    //       "BookVault": { "...": "Introduce problem-solving and system design books." },
+    //       "SkillForge": { "...": "Earn certifications in cloud & full-stack development." },
+    //       "JobSphere": { "...": "Start applying for internships & refining interview skills." },
+    //       "EventPulse": { "...": "Attend hackathons & industry networking events." },
+    //       "MentorLoop": { "...": "Deepen mentorship connections & resume feedback." },
+    //       "NetX": { "...": "Enhance LinkedIn engagement & write a second blog." }
+    //     },
+
+    //     "Milestone 3": {
+    //       "...": "Focus on project-based learning, hackathons, and networking."
+    //     },
+
+    //     "Milestone 4": {
+    //       "...": "Apply for real-world job opportunities and master technical interview prep."
+    //     },
+
+    //     "Milestone 5": {
+    //       "...": "Advance into specialized certifications and finalize job applications."
+    //     },
+
+    //     "Milestone 6": {
+    //       "...": "Target top employers and prepare for final interviews."
+    //     },
+
+    //     "Milestone 7": {
+    //       "...": "Negotiate job offers and finalize job readiness strategies."
+    //     },
+
+    //     "Milestone 8": {
+    //       "...": "Develop long-term career growth strategy and leadership mindset."
+    //     }
+    //   },
+
+    //   all 8 milestones without missing any single milestone in json format also give me an estimate date of when can I achieve my goal in json format`;
+    const prompt = `Generate a structured JSON career roadmap with *8 Milestones*, ensuring alignment with the candidate's resume data and dream career aspirations. 
+        ### *📌 Input Parameters:*
+        - *Resume Data:* ${data.resumeData} (Full parsed resume text)
+        - *Career Goals:*
+          - *Desired Role:* ${data.desiredRole}
+          - *Desired Employer:*${data.desired_employer} 
+          - *Desired Salary:* ${data.desiredSalary}
+          - *Desired Location:* ${data.desiredLocationCity}
+
+        ---
+
+        ### *🛠 Output Format (DO NOT CHANGE JSON STRUCTURE)*
+
+        {
+          "Milestone 1": {
+            "Timeline": {
+              "Start Date": "Month YYYY",
+              "End Date": "Month YYYY",
+              "Duration (Months)": X
+            },
+            "Goals": {
+              "Primary Goal": "Gain foundational knowledge in {desired_role} through structured learning.",
+              "Measurable Goals": [
+                "Complete 5 technical courses",
+                "Earn 1 beginner-level certification",
+                "Read 2 industry-related books",
+                "Improve resume and LinkedIn profile"
+              ]
+            },
+            "KPIs": {
+              "Technical Course Completion Rate": "80%+",
+              "Certification Achievement": "1 foundational certification earned",
+              "Book Reading Progress": "2 books completed",
+              "LinkedIn Profile Optimization": "Profile strength: All-Star level"
+            },
+            "TechVerse": {
+              "What it Covers": "Expert-led video courses on tech stacks, frameworks, and industry tools.",
+              "Focus Areas": ["List relevant technologies from resume & industry standards"],
+              "Top 5 Relevant Technical Courses": ["List beginner-friendly courses"]
+            },
+            "ProVision": {
+              "What it Covers": "Communication, leadership, negotiation, and personal branding.",
+              "Focus Areas": ["Public Speaking, Collaboration, Leadership"],
+              "Top 5 Relevant Non-Technical Courses": ["List relevant soft skills courses"]
+            },
+            "BookVault": {
+              "What it Covers": "Industry-relevant books on coding, leadership, problem-solving, and career growth.",
+              "Focus Areas": ["Software Development, Problem-Solving, Leadership"],
+              "Recommended Books": {
+                "Technical Books": ["List 2 beginner-level books"],
+                "Non-Technical Book": "List 1 career development book"
+              }
+            },
+            "SkillForge": {
+              "What it Covers": "Global certifications like AWS, Google Cloud, PMP, CFA, etc.",
+              "Focus Areas": ["Cloud Computing, Web Development, DevOps"],
+              "Top 3 Certifications": ["List beginner-friendly certifications"]
+            },
+            "JobSphere": {
+              "What it Covers": "Real-time interview simulations, resume feedback, and personalized job-matching.",
+              "Focus Areas": ["Resume Building, LinkedIn Profile, Networking"],
+              "Key Activities": [
+                "Draft and refine resume",
+                "Create a LinkedIn profile",
+                "Attend career workshops",
+                "Research job market for {desired_role}",
+                "Practice self-introduction for interviews"
+              ]
+            },
+            "EventPulse": {
+              "What it Covers": "Industry talks, hackathons, networking events, and career fairs.",
+              "Focus Areas": ["Tech Conferences, Webinars, Hackathons"],
+              "Top 5 Events/Webinars": ["List 5 relevant industry events"]
+            },
+            "MentorLoop": {
+              "What it Covers": "Direct guidance from industry mentors, career coaching, and roadmap planning.",
+              "Focus Areas": ["1:1 Mentorship, Career Roadmap, Resume Review"],
+              "Key Activities": [
+                "Find and connect with an industry mentor",
+                "Schedule monthly mentorship sessions",
+                "Review career roadmap and receive feedback",
+                "Discuss long-term career strategy"
+              ]
+            },
+            "NetX": {
+              "What it Covers": "LinkedIn engagement, professional group participation, and collaborations.",
+              "Focus Areas": ["Networking, Blogging, Community Building"],
+              "Key Activities": [
+                "Increase LinkedIn connections by 50%",
+                "Engage with posts from industry experts",
+                "Join relevant tech groups and communities",
+                "Write 1 blog on a tech topic",
+                "Collaborate on an open-source project"
+              ]
+            }
+          },
+
+          "Milestone 2": {
+            "Timeline": { "...": "Advance to intermediate-level skills." },
+            "Goals": { "...": "Improve problem-solving and earn advanced certifications." },
+            "KPIs": { "...": "Measure certification completions and hands-on project progress." },
+            "TechVerse": { "...": "Include intermediate-level courses." },
+            "ProVision": { "...": "Develop strong leadership and communication skills." },
+            "BookVault": { "...": "Introduce problem-solving and system design books." },
+            "SkillForge": { "...": "Earn certifications in cloud & full-stack development." },
+            "JobSphere": { "...": "Start applying for internships & refining interview skills." },
+            "EventPulse": { "...": "Attend hackathons & industry networking events." },
+            "MentorLoop": { "...": "Deepen mentorship connections & resume feedback." },
+            "NetX": { "...": "Enhance LinkedIn engagement & write a second blog." }
+          },
+
+          "Milestone 3": {
+            "...": "Focus on project-based learning, hackathons, and networking."
+          },
+
+          "Milestone 4": {
+            "...": "Apply for real-world job opportunities and master technical interview prep."
+          },
+
+          "Milestone 5": {
+            "...": "Advance into specialized certifications and finalize job applications."
+          },
+
+          "Milestone 6": {
+            "...": "Target top employers and prepare for final interviews."
+          },
+
+          "Milestone 7": {
+            "...": "Negotiate job offers and finalize job readiness strategies."
+          },
+
+          "Milestone 8": {
+            "...": "Develop long-term career growth strategy and leadership mindset."
+          }
+        }
+
+        ---
+
+        ### *📢 Instructions for Output Generation:*
+        1. Extract *relevant technical skills, certifications, and experiences* from {resume_data}.
+        2. Align *learning areas, books, certifications, events, and mentorship* with {desired_role} and {desired_employer}.
+        3. Ensure *progression across 8 milestones* — from learning *fundamentals* to *securing a job*.
+        4. Include a *single timeline per milestone* and ensure *measurable goals & KPIs* for tracking progress.
+        5. Format output in *exactly the same JSON structure* as defined.
+
+        🚀 *The output should be fully structured and ready for career tracking!*
+        `;
     const mileStoneData = await AIResume(prompt);
     return mileStoneData;
   } catch (error) {
