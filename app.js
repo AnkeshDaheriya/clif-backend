@@ -10,7 +10,6 @@ const authRoutes = require("./routes/authRoute.js");
 const otpRoutes = require("./routes/otpRoute.js");
 const { mileStoneRouter } = require("./routes/mileStone.js");
 
-const port = 5000;
 var app = express();
 
 app.use(cors()); // ✅ Enable CORS before routes
@@ -19,6 +18,26 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+
+// Configure CORS based on environment
+const allowedOrigins =
+  process.env.NODE_ENV === "production"
+    ? [
+        "https://uat.clif.ai",
+        "https://clif.ai",
+        "https://www.uat.clif.ai",
+        "https://www.clif.ai",
+      ] // Production origin
+    : ["http://localhost:3000", "http://localhost:3001"]; // Development origins
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
 
 // Debugging Middleware to Log Requests
 app.use((req, res, next) => {
@@ -52,7 +71,33 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ✅ Start the Server
-app.listen(port, () => {
-  console.log(`🚀 Server running at http://localhost:${port}`);
-});
+// HTTPS Setup (Production Only)
+if (process.env.NODE_ENV === "production") {
+  const SSL_KEY_PATH = "/etc/letsencrypt/live/uat.clif.ai/privkey.pem";
+  const SSL_CERT_PATH = "/etc/letsencrypt/live/uat.clif.ai/fullchain.pem";
+
+  if (fs.existsSync(SSL_KEY_PATH) && fs.existsSync(SSL_CERT_PATH)) {
+    const httpsOptions = {
+      key: fs.readFileSync(SSL_KEY_PATH),
+      cert: fs.readFileSync(SSL_CERT_PATH),
+    };
+
+    const PORT = process.env.PORT || 5000;
+    const HOST = "0.0.0.0";
+
+    https.createServer(httpsOptions, app).listen(PORT, HOST, () => {
+      console.log(`Server is running securely on https://${HOST}:${PORT}`);
+    });
+  } else {
+    console.error("SSL certificates not found. Please check your paths.");
+    process.exit(1);
+  }
+} else {
+  // Fallback to HTTP for Development
+  const PORT = process.env.PORT || 5000;
+  const HOST = "0.0.0.0";
+
+  app.listen(PORT, HOST, () => {
+    console.log(`Server is running on http://${HOST}:${PORT}`);
+  });
+}
