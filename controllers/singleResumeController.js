@@ -33,6 +33,7 @@ const singleResumeUpload = async (req, res) => {
     return res.json({
       message: "Resume details extracted successfully",
       extractedText: parsedData,
+      fileLocation : fileLocation,
       success: true,
     });
   } catch (error) {

@@ -93,6 +93,16 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
 
+    // Currency Information (New fields)
+    desiredCurrency: {
+      type: String, // Store the currency (e.g., "USD", "EUR", etc.)
+      required: false, // Make optional
+    },
+    currency: {
+      type: String, // Store the currency (e.g., "USD", "EUR", etc.)
+      required: false, // Make optional
+    },
+
     // Professional Details
     professionalDomain: {
       type: String,
@@ -103,7 +113,7 @@ const userSchema = new mongoose.Schema(
       required: false, // Make optional
     },
     currentSalary: {
-      type: Number,
+      type: String,
       required: false, // Make optional
     },
     desiredRole: {
@@ -111,7 +121,7 @@ const userSchema = new mongoose.Schema(
       required: false, // Make optional
     },
     desiredSalary: {
-      type: Number,
+      type: String,
       required: false, // Make optional
     },
 

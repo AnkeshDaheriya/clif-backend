@@ -20,20 +20,24 @@ const userRegister = async (req, res) => {
       age,
       phone_no,
       gender,
+      currency,
+      desiredCurrency,
       current_employer,
       desired_employer,
-      current_location,
+      current_country,
+      current_state,
       education,
       yearOfCompletion,
       specialization,
-      desiredLocationCountry,
-      desiredLocationCity,
+      desired_country,
+      desired_state,
       professionalDomain,
       currentRole,
       currentSalary,
       desiredRole,
       desiredSalary,
       linkedinUrl,
+      fileLocation,
     } = req.body;
     if (
       !firstname ||
@@ -43,12 +47,15 @@ const userRegister = async (req, res) => {
       !phone_no ||
       !gender ||
       !current_employer ||
+      !desired_country ||
+      !desired_state ||
       !desired_employer ||
-      !current_location ||
+      !current_country ||
+      !current_state ||
       !education ||
       !yearOfCompletion ||
-      !desiredLocationCountry ||
-      !desiredLocationCity ||
+      !desired_country ||
+      !desired_state ||
       !professionalDomain ||
       !currentRole ||
       !currentSalary ||
@@ -74,17 +81,17 @@ const userRegister = async (req, res) => {
           desired_employer: !desired_employer
             ? "Desired employer is required"
             : null,
-          current_location: !current_location
+          current_country: !current_country
             ? "Current location is required"
             : null,
           education: !education ? "Education is required" : null,
           yearOfCompletion: !yearOfCompletion
             ? "Year of completion is required"
             : null,
-          desiredLocationCountry: !desiredLocationCountry
+          desired_country: !desired_country
             ? "Desired location country is required"
             : null,
-          desiredLocationCity: !desiredLocationCity
+          desired_state: !desired_state
             ? "Desired location city is required"
             : null,
           professionalDomain: !professionalDomain
@@ -98,12 +105,14 @@ const userRegister = async (req, res) => {
         },
       });
     }
-    if (!req.files.fileUpload) {
-      return res.json({
-        status: 400,
-        message: "Resume is required !",
-        success: false,
-      });
+    if (!fileLocation) {
+      if (!req.files.fileUpload) {
+        return res.json({
+          status: 400,
+          message: "Resume is required !",
+          success: false,
+        });
+      }
     }
     if (!req.files.headshot) {
       return res.json({
@@ -187,14 +196,14 @@ const userRegister = async (req, res) => {
       });
     }
 
-    const validEducation = ["Undergrad", "Bachelors", "Masters", "Doctorate"];
-    if (!validEducation.includes(education)) {
-      return res.status(400).json({
-        status: 400,
-        message: "Invalid education level",
-        success: false,
-      });
-    }
+    // const validEducation = ["Undergrad", "Bachelors", "Masters", "Doctorate"];
+    // if (!validEducation.includes(education)) {
+    //   return res.status(400).json({
+    //     status: 400,
+    //     message: "Invalid education level",
+    //     success: false,
+    //   });
+    // }
 
     const validProfessionalDomains = [
       "Technology",
@@ -226,25 +235,27 @@ const userRegister = async (req, res) => {
       "Chairperson / Board of Directors",
     ];
 
-    if (!validRoles.includes(currentRole)) {
-      return res.status(400).json({
-        status: 400,
-        message: "Invalid current role",
-        success: false,
-      });
-    }
+    // if (!validRoles.includes(currentRole)) {
+    //   return res.status(400).json({
+    //     status: 400,
+    //     message: "Invalid current role",
+    //     success: false,
+    //   });
+    // }
 
-    if (!validRoles.includes(desiredRole)) {
-      return res.status(400).json({
-        status: 400,
-        message: "Invalid desired role",
-        success: false,
-      });
-    }
+    // if (!validRoles.includes(desiredRole)) {
+    //   return res.status(400).json({
+    //     status: 400,
+    //     message: "Invalid desired role",
+    //     success: false,
+    //   });
+    // }
 
     // File validation (assuming you want to check file type)
     // const fileUpload = req.files.fileUpload[0];
-    const uploadFileLocation = `/public/resume_files/${req.files.fileUpload[0].originalname}`;
+    const uploadFileLocation = fileLocation
+      ? fileLocation
+      : `/public/resume_files/${req.files.fileUpload[0].originalname}`;
     const headshotLocation = `/public/resume_files/${req.files.headshot[0].originalname}`;
     // console.log("headshot", headshotLocation, "file loac", uploadFileLocation);
     // console.log("$image", headshot);
@@ -253,12 +264,14 @@ const userRegister = async (req, res) => {
       "application/msword",
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ];
-    if (!allowedFileTypes.includes(req.files.fileUpload[0].mimetype)) {
-      return res.status(400).json({
-        status: 400,
-        message: "Invalid file type. Please upload PDF or Word document",
-        success: false,
-      });
+    if (!fileLocation) {
+      if (!allowedFileTypes.includes(req.files.fileUpload[0].mimetype)) {
+        return res.status(400).json({
+          status: 400,
+          message: "Invalid file type. Please upload PDF or Word document",
+          success: false,
+        });
+      }
     }
     const allowedImageTypes = ["image/jpg", "image/jpeg", "image/png"];
     const maxImageSize = 5 * 1024 * 1024; // 5MB
@@ -290,29 +303,32 @@ const userRegister = async (req, res) => {
     // console.log("exist");
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new userModel({
+      desiredCurrency,
+      currency,
       firstname,
       lastname,
       email,
       password: hashedPassword,
       headshot: headshotLocation,
+      desired_country,
+      desired_state,
       age,
       phone_no,
       gender,
       current_employer,
       desired_employer,
-      current_location,
+      current_country,
+      current_state,
       education,
       yearOfCompletion,
       specialization,
-      desiredLocationCountry,
-      desiredLocationCity,
       professionalDomain,
       currentRole,
       currentSalary,
       desiredRole,
       desiredSalary,
       linkedinUrl,
-      fileUpload: uploadFileLocation,
+      fileUpload: fileLocation ? fileLocation : uploadFileLocation,
     });
 
     // console.log("uploadFileLocation",ss);
@@ -334,8 +350,8 @@ const userRegister = async (req, res) => {
     console.log("#Json DATA", J_data);
     const resumeData = {
       personal_info: {
-        name: `${J_data?.personal_info?.name || "Unknown"} ${
-          J_data["Personal Information"]?.name ? "" : "Unknown"
+        name: `${J_data?.personal_info?.first_name || "Unknown"}``${
+          J_data?.personal_info?.last_name || "Unknown"
         }`,
         email:
           J_data?.personal_info?.email ||
@@ -412,8 +428,8 @@ const userRegister = async (req, res) => {
     const data = {
       resumeData: J_data,
       desired_employer,
-      desiredLocationCountry,
-      desiredLocationCity,
+      desired_country,
+      desired_state,
     };
 
     const mileStone = await mileStones(data);

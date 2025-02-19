@@ -1,6 +1,7 @@
 const prompt = {
   personal_info: {
-    name: "John Doe",
+    first_name: "John",
+    last_name : "Doe",
     email: "john.doe@example.com",
     phone: "+91-XXXXXXXXXX",
     location: {
