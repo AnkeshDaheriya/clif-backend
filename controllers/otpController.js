@@ -22,6 +22,7 @@ const sendOtp = async (req, res) => {
 
     const otp = generateOtp();
     const expiresAt = Date.now() + 5 * 60 * 1000; // OTP valid for 5 minutes
+    console.log("$opt",otp)
 
     // Store OTP in memory
     otpStore[email] = { otp, expiresAt };
