@@ -9,8 +9,16 @@ const uploadRoutes = require("./routes/resumeRoutes.js");
 const authRoutes = require("./routes/authRoute.js");
 const otpRoutes = require("./routes/otpRoute.js");
 const { mileStoneRouter } = require("./routes/mileStone.js");
-
+const WebSocket = require("ws");
+const https = require("https");
+const fs = require("fs");
 var app = express();
+const multer = require("multer");
+const lmsRoutes = require("./routes/lms/authRoutes.js");
+const authRoute = require("./routes/authRoute.js");
+const courseRoutes = require("./routes/lms/courseRoutes.js");
+const moduleRoutes = require("./routes/lms/moduleRoutes.js");
+const videoRoutes = require("./routes/lms/videoRoutes.js");
 
 app.use(cors()); // ✅ Enable CORS before routes
 app.use(logger("dev"));
@@ -45,11 +53,20 @@ app.use((req, res, next) => {
   next();
 });
 
+const wss = new WebSocket.Server({ port: 3000, path: "/ws" });
+
+wss.on("connection", (ws) => {
+  console.log("Client connected");
+  ws.on("message", (message) => {
+    console.log(`Received: ${message}`);
+  });
+});
+
 // ✅ Connect to Database
 ConnectDB();
 
 // ✅ Define Routes
-app.use("/auth", authRoutes);
+app.use("/auth", authRoute);
 app.use("/resume", uploadRoutes);
 app.use("/auth", otpRoutes);
 app.use("/mileStone", mileStoneRouter);
@@ -57,6 +74,12 @@ app.use("/mileStone", mileStoneRouter);
 app.get("/", (req, res) => {
   res.send("Server is running...");
 });
+
+app.use("/api/auth", lmsRoutes);
+app.use("/api/courses", courseRoutes);
+app.use("/api/modules", moduleRoutes);
+app.use("/api/videos", videoRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // ✅ 404 Error Handling
 app.use((req, res, next) => {
