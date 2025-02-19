@@ -1,5 +1,5 @@
 const User = require("../../models/lms/User");
-
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
 const loginUser = async (req, res) => {
