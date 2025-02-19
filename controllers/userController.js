@@ -350,9 +350,7 @@ const userRegister = async (req, res) => {
     console.log("#Json DATA", J_data);
     const resumeData = {
       personal_info: {
-        name: `${J_data?.personal_info?.first_name || "Unknown"}``${
-          J_data?.personal_info?.last_name || "Unknown"
-        }`,
+        name: `${J_data?.personal_info?.first_name || "Unknown"} ${J_data?.personal_info?.last_name || "Unknown"}`,
         email:
           J_data?.personal_info?.email ||
           J_data["Personal Information"]?.email ||
