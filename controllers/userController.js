@@ -606,15 +606,14 @@ const mileStones = async (data) => {
     //   },
 
     //   all 8 milestones without missing any single milestone in json format also give me an estimate date of when can I achieve my goal in json format`;
-    const prompt = `Generate a structured JSON career roadmap with *8 Milestones*, ensuring alignment with the candidate's resume data and dream career aspirations. 
+    const prompt = `Generate a structured JSON career roadmap with *minimum and maximum 8 Milestones*, ensuring alignment with the candidate's resume data and dream career aspirations. 
         ### *📌 Input Parameters:*
         - *Resume Data:* ${data.resumeData} (Full parsed resume text)
         - *Career Goals:*
           - *Desired Role:* ${data.desiredRole}
           - *Desired Employer:*${data.desired_employer} 
           - *Desired Salary:* ${data.desiredSalary}
-          - *Desired Location:* ${data.desiredLocationCity}
-
+          - *Desired Location:* ${data.desired_country},${data.desired_state}
         ---
 
         ### *🛠 Output Format (DO NOT CHANGE JSON STRUCTURE)*
