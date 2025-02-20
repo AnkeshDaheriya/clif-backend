@@ -497,126 +497,109 @@ const mileStones = async (data) => {
         ---
         ### *🛠 Output Format (DO NOT CHANGE JSON STRUCTURE)*
         {
-          "Milestone 1": {
-            "Timeline": {
-              "Start Date": "Month YYYY",
-              "End Date": "Month YYYY",
-              "Duration (Months)": X
-            },
-            "Goals": {
-              "Primary Goal": "Gain foundational knowledge in {desired_role} through structured learning.",
-              "Measurable Goals": [
-                "Complete 5 technical courses",
-                "Earn 1 beginner-level certification",
-                "Read 2 industry-related books",
-                "Improve resume and LinkedIn profile"
-              ]
-            },
-            "KPIs": {
-              "Technical Course Completion Rate": "80%+",
-              "Certification Achievement": "1 foundational certification earned",
-              "Book Reading Progress": "2 books completed",
-              "LinkedIn Profile Optimization": "Profile strength: All-Star level"
-            },
-            "TechVerse": {
-              "What it Covers": "Expert-led video courses on tech stacks, frameworks, and industry tools.",
-              "Focus Areas": ["List relevant technologies from resume & industry standards"],
-              "Top 5 Relevant Technical Courses": ["List beginner-friendly courses"]
-            },
-            "ProVision": {
-              "What it Covers": "Communication, leadership, negotiation, and personal branding.",
-              "Focus Areas": ["Public Speaking, Collaboration, Leadership"],
-              "Top 5 Relevant Non-Technical Courses": ["List relevant soft skills courses"]
-            },
-            "BookVault": {
-              "What it Covers": "Industry-relevant books on coding, leadership, problem-solving, and career growth.",
-              "Focus Areas": ["Software Development, Problem-Solving, Leadership"],
-              "Recommended Books": {
-                "Technical Books": ["List 2 beginner-level books"],
-                "Non-Technical Book": "List 1 career development book"
-              }
-            },
-            "SkillForge": {
-              "What it Covers": "Global certifications like AWS, Google Cloud, PMP, CFA, etc.",
-              "Focus Areas": ["Cloud Computing, Web Development, DevOps"],
-              "Top 3 Certifications": ["List beginner-friendly certifications"]
-            },
-            "JobSphere": {
-              "What it Covers": "Real-time interview simulations, resume feedback, and personalized job-matching.",
-              "Focus Areas": ["Resume Building, LinkedIn Profile, Networking"],
-              "Key Activities": [
-                "Draft and refine resume",
-                "Create a LinkedIn profile",
-                "Attend career workshops",
-                "Research job market for {desired_role}",
-                "Practice self-introduction for interviews"
-              ]
-            },
-            "EventPulse": {
-              "What it Covers": "Industry talks, hackathons, networking events, and career fairs.",
-              "Focus Areas": ["Tech Conferences, Webinars, Hackathons"],
-              "Top 5 Events/Webinars": ["List 5 relevant industry events"]
-            },
-            "MentorLoop": {
-              "What it Covers": "Direct guidance from industry mentors, career coaching, and roadmap planning.",
-              "Focus Areas": ["1:1 Mentorship, Career Roadmap, Resume Review"],
-              "Key Activities": [
-                "Find and connect with an industry mentor",
-                "Schedule monthly mentorship sessions",
-                "Review career roadmap and receive feedback",
-                "Discuss long-term career strategy"
-              ]
-            },
-            "NetX": {
-              "What it Covers": "LinkedIn engagement, professional group participation, and collaborations.",
-              "Focus Areas": ["Networking, Blogging, Community Building"],
-              "Key Activities": [
-                "Increase LinkedIn connections by 50%",
-                "Engage with posts from industry experts",
-                "Join relevant tech groups and communities",
-                "Write 1 blog on a tech topic",
-                "Collaborate on an open-source project"
-              ]
-            }
-          },
-
-          "Milestone 2": {
-            "Timeline": { "...": "Advance to intermediate-level skills." },
-            "Goals": { "...": "Improve problem-solving and earn advanced certifications." },
-            "KPIs": { "...": "Measure certification completions and hands-on project progress." },
-            "TechVerse": { "...": "Include intermediate-level courses." },
-            "ProVision": { "...": "Develop strong leadership and communication skills." },
-            "BookVault": { "...": "Introduce problem-solving and system design books." },
-            "SkillForge": { "...": "Earn certifications in cloud & full-stack development." },
-            "JobSphere": { "...": "Start applying for internships & refining interview skills." },
-            "EventPulse": { "...": "Attend hackathons & industry networking events." },
-            "MentorLoop": { "...": "Deepen mentorship connections & resume feedback." },
-            "NetX": { "...": "Enhance LinkedIn engagement & write a second blog." }
-          },
-
-          "Milestone 3": {
-            "...": "Focus on project-based learning, hackathons, and networking."
-          },
-
-          "Milestone 4": {
-            "...": "Apply for real-world job opportunities and master technical interview prep."
-          },
-
-          "Milestone 5": {
-            "...": "Advance into specialized certifications and finalize job applications."
-          },
-
-          "Milestone 6": {
-            "...": "Target top employers and prepare for final interviews."
-          },
-
-          "Milestone 7": {
-            "...": "Negotiate job offers and finalize job readiness strategies."
-          },
-
-          "Milestone 8": {
-            "...": "Develop long-term career growth strategy and leadership mindset."
-          }
+        "Milestone 1": {
+        "Timeline": {
+        "Start Date": "Month YYYY",
+        "End Date": "Month YYYY",
+        "Duration (Months)": X
+        },
+        "Goals": {
+        "Primary Goal": "Gain foundational knowledge in {desired_role} through structured learning.",
+        "Measurable Goals": [
+        "Complete 5 technical courses",
+        "Earn 1 beginner-level certification",
+        "Read 2 industry-related books",
+        "Improve resume and LinkedIn profile"
+        ]
+        },
+        "KPIs": {
+        "Technical Course Completion Rate": "80%+",
+        "Certification Achievement": "1 foundational certification earned",
+        "Book Reading Progress": "2 books completed",
+        "LinkedIn Profile Optimization": "Profile strength: All-Star level"
+        },
+        "TechVerse": {
+        "What it Covers": "Expert-led video courses on tech stacks, frameworks, and industry tools.",
+        "Focus Areas": ["Extract relevant technologies from resume and industry standards"],
+        "Top 5 Relevant Technical Courses": ["List beginner-friendly courses"]
+        },
+        "ProVision": {
+        "What it Covers": "Communication, leadership, negotiation, and personal branding.",
+        "Focus Areas": ["Public Speaking, Collaboration, Leadership"],
+        "Top 5 Relevant Non-Technical Courses": ["List relevant soft skills courses"]
+        },
+        "BookVault": {
+        "What it Covers": "Industry-relevant books on coding, leadership, problem-solving, and career growth.",
+        "Focus Areas": ["Software Development, Problem-Solving, Leadership"],
+        "Recommended Books": {
+        "Technical Books": ["List 2 beginner-level books"],
+        "Non-Technical Book": "List 1 career development book"
+        }
+        },
+        "SkillForge": {
+        "What it Covers": "Global certifications like AWS, Google Cloud, PMP, CFA, etc.",
+        "Focus Areas": ["Cloud Computing, Web Development, DevOps"],
+        "Top 3 Certifications": ["List beginner-friendly certifications"]
+        },
+        "JobSphere": {
+        "What it Covers": "Real-time interview simulations, resume feedback, and personalized job-matching.",
+        "Focus Areas": ["Resume Building, LinkedIn Profile, Networking"],
+        "Key Activities": [
+        "Draft and refine resume",
+        "Create a LinkedIn profile",
+        "Attend career workshops",
+        "Research job market for {desired_role}",
+        "Practice self-introduction for interviews"
+        ]
+        },
+        "EventPulse": {
+        "What it Covers": "Industry talks, hackathons, networking events, and career fairs.",
+        "Focus Areas": ["Tech Conferences, Webinars, Hackathons"],
+        "Top 5 Events/Webinars": ["List 5 relevant industry events"]
+        },
+        "MentorLoop": {
+        "What it Covers": "Direct guidance from industry mentors, career coaching, and roadmap planning.",
+        "Focus Areas": ["1:1 Mentorship, Career Roadmap, Resume Review"],
+        "Key Activities": [
+        "Find and connect with an industry mentor",
+        "Schedule monthly mentorship sessions",
+        "Review career roadmap and receive feedback",
+        "Discuss long-term career strategy"
+        ]
+        },
+        "NetX": {
+        "What it Covers": "LinkedIn engagement, professional group participation, and collaborations.",
+        "Focus Areas": ["Networking, Blogging, Community Building"],
+        "Key Activities": [
+        "Increase LinkedIn connections by 50%",
+        "Engage with posts from industry experts",
+        "Join relevant tech groups and communities",
+        "Write 1 blog on a tech topic",
+        "Collaborate on an open-source project"
+        ]
+        }
+        },
+        "Milestone 2": {
+        "...": "Advance to intermediate-level skills."
+        },
+        "Milestone 3": {
+        "...": "Focus on project-based learning, hackathons, and networking."
+        },
+        "Milestone 4": {
+        "...": "Apply for real-world job opportunities and master technical interview prep."
+        },
+        "Milestone 5": {
+        "...": "Advance into specialized certifications and finalize job applications."
+        },
+        "Milestone 6": {
+        "...": "Target top employers and prepare for final interviews."
+        },
+        "Milestone 7": {
+        "...": "Negotiate job offers and finalize job readiness strategies."
+        },
+        "Milestone 8": {
+        "...": "Develop long-term career growth strategy and leadership mindset."
+        }
         }
 
         ---

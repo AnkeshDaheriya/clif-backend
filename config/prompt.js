@@ -2,7 +2,8 @@ const prompt = {
   personal_info: {
     name: "John Doe",
     email: "john.doe@example.com",
-    phone: "+91-XXXXXXXXXX",
+    phone: "Without country code",
+    country_code: "extract from phone number",
     location: {
       city: "Mumbai",
       state: "Maharashtra",

@@ -3,7 +3,7 @@ require("dotenv").config();
 
 // Create a transporter object using SMTP (use Gmail, Outlook, or Mailtrap for testing)
 const transporter = nodemailer.createTransport({
-  host: "smtp.mailtrap.io", // Replace with your SMTP server (for Gmail: "smtp.gmail.com")
+  host: "smtp.gmail.com", // Replace with your SMTP server (for Gmail: "smtp.gmail.com")
   port: 587, // 465 for SSL, 587 for TLS
   secure: false,
   auth: {
