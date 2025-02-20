@@ -2,7 +2,7 @@
 const bcrypt = require("bcrypt");
 const userModel = require("../models/users");
 const resumeModel = require("../models/resumeModel");
-
+const mileStoneModel = require("../models/mileStone.js");
 const authService = require("../config/authService.js");
 const { ErrorHandler } = require("../helper/error");
 const { textExtraction } = require("../helper/resumeTextParser.js");
@@ -337,12 +337,12 @@ const userRegister = async (req, res) => {
     const prompt = `Extract all the key details from resume text ${
       resumeText.extractedText?.pages
     } 
-                    and give and give all the resume details in the following JSON format: ${JSON.stringify(
-                      promptFormat,
-                      null,
-                      2
-                    )}. in json data keep all technical skills in a array and 
-                    non technical skills in a array and all other skills in a array all within skills section  `;
+    and give and give all the resume details in the following JSON format: ${JSON.stringify(
+      promptFormat,
+      null,
+      2
+    )}. in json data keep all technical skills in a array and 
+    non technical skills in a array and all other skills in a array all within skills section  `;
 
     const response = await AIResume(prompt);
 
@@ -440,9 +440,38 @@ const userRegister = async (req, res) => {
           .replace(/[\r\n\t]/g, "") // Remove newlines, tabs
           .replace(/:\s*X/g, ': "Unknown"') // Replace invalid `X` values
           .replace(/'/g, '"'); // Convert single to double quotes if needed
-        const mileStoneData = JSON.parse(sanitized);
-        console.log("mileStone starts here");
-        console.dir(mileStoneData, { depth: null });
+        const mileStoneData = JSON.parse(sanitized); // Parse sanitized JSON data
+        for (const milestoneKey in mileStoneData) {
+          if (mileStoneData.hasOwnProperty(milestoneKey)) {
+            const milestoneDetails = mileStoneData[milestoneKey];
+
+            // Use Mongoose model to save the data
+            const newMilestone = new MileStone({
+              milestone: milestoneKey,
+              timeline: milestoneDetails.Timeline,
+              goals: milestoneDetails.Goals,
+              kpis: milestoneDetails.KPIs,
+              techVerse: milestoneDetails.TechVerse,
+              provision: milestoneDetails.ProVision,
+              bookVault: milestoneDetails.BookVault,
+              skillForge: milestoneDetails.SkillForge,
+              jobSphere: milestoneDetails.JobSphere,
+              eventPulse: milestoneDetails.EventPulse,
+              mentorLoop: milestoneDetails.MentorLoop,
+              netX: milestoneDetails.NetX,
+            });
+
+            // Save to the database
+            newMilestone
+              .save()
+              .then(() => {
+                console.log(`${milestoneKey} saved successfully!`);
+              })
+              .catch((err) => {
+                console.error(`Error saving ${milestoneKey}:`, err);
+              });
+          }
+        }
       } catch (error) {
         console.error("Error parsing JSON:", error);
       }
@@ -451,7 +480,6 @@ const userRegister = async (req, res) => {
       console.log("mileStone starts here");
       console.dir(mileStone, { depth: null });
     }
-
     newUser.save();
 
     return res.json({
@@ -472,6 +500,7 @@ const userRegister = async (req, res) => {
 
 const mileStones = async (data) => {
   try {
+<<<<<<< HEAD
     // const prompt = `Create a detailed career growth plan for an individual with the current resume and current skill set in the following json format –
     // ${data.resumeData},
     // This individual aspires to have a desired job in the desired location and with the desired employer in the following variables:
@@ -607,17 +636,22 @@ const mileStones = async (data) => {
 
     //   all 8 milestones without missing any single milestone in json format also give me an estimate date of when can I achieve my goal in json format`;
     const prompt = `Generate a structured JSON career roadmap with *minimum and maximum 8 Milestones*, ensuring alignment with the candidate's resume data and dream career aspirations. 
+=======
+    const prompt = `Generate a structured JSON career roadmap with *8 Milestones*, ensuring alignment with the candidate's resume data and dream career aspirations. 
+>>>>>>> b7cc5cee252b4e1c526f759cb5e9f5f83c8f9060
         ### *📌 Input Parameters:*
         - *Resume Data:* ${data.resumeData} (Full parsed resume text)
         - *Career Goals:*
           - *Desired Role:* ${data.desiredRole}
           - *Desired Employer:*${data.desired_employer} 
           - *Desired Salary:* ${data.desiredSalary}
+<<<<<<< HEAD
           - *Desired Location:* ${data.desired_country},${data.desired_state}
+=======
+          - *Desired Location:* ${data.desiredLocationCity}
+>>>>>>> b7cc5cee252b4e1c526f759cb5e9f5f83c8f9060
         ---
-
         ### *🛠 Output Format (DO NOT CHANGE JSON STRUCTURE)*
-
         {
           "Milestone 1": {
             "Timeline": {
