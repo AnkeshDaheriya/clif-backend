@@ -1,76 +1,186 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const roadmapSchema = new mongoose.Schema(
-  {
-    user_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "userModel", // Reference to the user model
-      required: true, // Make user_id required
-    },
-    milestones: [
-      {
-        milestone: {
-          type: Number,
-          required: true, // Milestone number (1, 2, 3, etc.)
-        },
-        start_date: {
-          type: Date,
-          required: true, // Start date of the milestone
-        },
-        end_date: {
-          type: Date,
-          required: true, // End date of the milestone
-        },
-        duration: {
-          type: Number,
-          required: true, // Duration in months
-        },
-        goals: {
-          type: Map,
-          of: String, // Store the goals as key-value pairs
-        },
-        kpis: {
-          type: Map,
-          of: String, // Store the KPIs as key-value pairs
-        },
-        techverse: {
-          type: Map,
-          of: String, // Store the courses or tech areas as key-value pairs
-        },
-        provision: {
-          type: Map,
-          of: String, // Store provisions like soft skills
-        },
-        bookvault: {
-          type: Map,
-          of: String, // Store recommended books
-        },
-        skillforge: {
-          type: Map,
-          of: String, // Store certifications
-        },
-        jobsphere: {
-          type: Map,
-          of: String, // Store job-related activities
-        },
-        eventpulse: {
-          type: Map,
-          of: String, // Store events/webinars
-        },
-        mentorloop: {
-          type: Map,
-          of: String, // Store mentorship activities
-        },
-        netx: {
-          type: Map,
-          of: String, // Store networking activities
-        },
-      },
-    ],
+const milestoneSchema = new Schema({
+  userID: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
   },
-  {
-    timestamps: true, // Automatically adds createdAt and updatedAt
-  }
-);
+  goalAchievedBy: { type: Date },
+  milestones: {
+    1: {
+      timeline: {
+        startDate: { type: Date },
+        endDate: { type: Date },
+        durationMonths: { type: Number },
+      },
+      focusArea: { type: String },
+      goal: { type: String },
+      keyActivities: [String],
+      measurableOutcomes: [String],
+      learningResources: {
+        courses: [String],
+        books: [String],
+        tools: [String],
+      },
+      kpis: [String],
+      jobRoleDevelopment: {
+        role: { type: String },
+        responsibilities: [String],
+      },
+    },
+    2: {
+      timeline: {
+        startDate: { type: Date },
+        endDate: { type: Date },
+        durationMonths: { type: Number },
+      },
+      focusArea: { type: String },
+      goal: { type: String },
+      keyActivities: [String],
+      measurableOutcomes: [String],
+      learningResources: {
+        courses: [String],
+        books: [String],
+        tools: [String],
+      },
+      kpis: [String],
+      jobRoleDevelopment: {
+        role: { type: String },
+        responsibilities: [String],
+      },
+    },
+    3: {
+      timeline: {
+        startDate: { type: Date },
+        endDate: { type: Date },
+        durationMonths: { type: Number },
+      },
+      focusArea: { type: String },
+      goal: { type: String },
+      keyActivities: [String],
+      measurableOutcomes: [String],
+      learningResources: {
+        courses: [String],
+        books: [String],
+        tools: [String],
+      },
+      kpis: [String],
+      jobRoleDevelopment: {
+        role: { type: String },
+        responsibilities: [String],
+      },
+    },
+    // Continue similarly for milestones '4' to '8' ...
+    4: {
+      timeline: {
+        startDate: { type: Date },
+        endDate: { type: Date },
+        durationMonths: { type: Number },
+      },
+      focusArea: { type: String },
+      goal: { type: String },
+      keyActivities: [String],
+      measurableOutcomes: [String],
+      learningResources: {
+        courses: [String],
+        books: [String],
+        tools: [String],
+      },
+      kpis: [String],
+      jobRoleDevelopment: {
+        role: { type: String },
+        responsibilities: [String],
+      },
+    },
+    5: {
+      timeline: {
+        startDate: { type: Date },
+        endDate: { type: Date },
+        durationMonths: { type: Number },
+      },
+      focusArea: { type: String },
+      goal: { type: String },
+      keyActivities: [String],
+      measurableOutcomes: [String],
+      learningResources: {
+        courses: [String],
+        books: [String],
+        tools: [String],
+      },
+      kpis: [String],
+      jobRoleDevelopment: {
+        role: { type: String },
+        responsibilities: [String],
+      },
+    },
+    6: {
+      timeline: {
+        startDate: { type: Date },
+        endDate: { type: Date },
+        durationMonths: { type: Number },
+      },
+      focusArea: { type: String },
+      goal: { type: String },
+      keyActivities: [String],
+      measurableOutcomes: [String],
+      learningResources: {
+        courses: [String],
+        books: [String],
+        tools: [String],
+      },
+      kpis: [String],
+      jobRoleDevelopment: {
+        role: { type: String },
+        responsibilities: [String],
+      },
+    },
+    7: {
+      timeline: {
+        startDate: { type: Date },
+        endDate: { type: Date },
+        durationMonths: { type: Number },
+      },
+      focusArea: { type: String },
+      goal: { type: String },
+      keyActivities: [String],
+      measurableOutcomes: [String],
+      learningResources: {
+        courses: [String],
+        books: [String],
+        tools: [String],
+      },
+      kpis: [String],
+      jobRoleDevelopment: {
+        role: { type: String },
+        responsibilities: [String],
+      },
+    },
+    8: {
+      timeline: {
+        startDate: { type: Date },
+        endDate: { type: Date },
+        durationMonths: { type: Number },
+      },
+      focusArea: { type: String },
+      goal: { type: String },
+      keyActivities: [String],
+      measurableOutcomes: [String],
+      learningResources: {
+        courses: [String],
+        books: [String],
+        tools: [String],
+      },
+      kpis: [String],
+      jobRoleDevelopment: {
+        role: { type: String },
+        responsibilities: [String],
+      },
+    },
+  },
+});
 
-module.exports = mongoose.model("mileStone", roadmapSchema);
+const Milestone = mongoose.model("Milestone", milestoneSchema);
+
+module.exports = Milestone;
