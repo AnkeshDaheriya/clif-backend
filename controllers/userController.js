@@ -2,13 +2,14 @@
 const bcrypt = require("bcrypt");
 const userModel = require("../models/users");
 const resumeModel = require("../models/resumeModel");
-const mileStoneModel = require("../models/mileStone.js");
+const Milestone = require("../models/mileStoneModel.js");
 const authService = require("../config/authService.js");
 const { ErrorHandler } = require("../helper/error");
 const { textExtraction } = require("../helper/resumeTextParser.js");
 const { uploadResume } = require("./resumeController.js");
 const { AIResume } = require("../helper/OpenAiHelper.js");
 const { promptFormat } = require("../config/prompt.js");
+const { mileStones, getMileStones } = require("./mileStoneController.js");
 
 const userRegister = async (req, res) => {
   try {
@@ -196,15 +197,6 @@ const userRegister = async (req, res) => {
       });
     }
 
-    // const validEducation = ["Undergrad", "Bachelors", "Masters", "Doctorate"];
-    // if (!validEducation.includes(education)) {
-    //   return res.status(400).json({
-    //     status: 400,
-    //     message: "Invalid education level",
-    //     success: false,
-    //   });
-    // }
-
     const validProfessionalDomains = [
       "Technology",
       "Management",
@@ -234,31 +226,10 @@ const userRegister = async (req, res) => {
       "C-Suite (CEO/CFO/CMO & Similar)",
       "Chairperson / Board of Directors",
     ];
-
-    // if (!validRoles.includes(currentRole)) {
-    //   return res.status(400).json({
-    //     status: 400,
-    //     message: "Invalid current role",
-    //     success: false,
-    //   });
-    // }
-
-    // if (!validRoles.includes(desiredRole)) {
-    //   return res.status(400).json({
-    //     status: 400,
-    //     message: "Invalid desired role",
-    //     success: false,
-    //   });
-    // }
-
-    // File validation (assuming you want to check file type)
-    // const fileUpload = req.files.fileUpload[0];
     const uploadFileLocation = fileLocation
       ? fileLocation
       : `/public/resume_files/${req.files.fileUpload[0].originalname}`;
     const headshotLocation = `/public/resume_files/${req.files.headshot[0].originalname}`;
-    // console.log("headshot", headshotLocation, "file loac", uploadFileLocation);
-    // console.log("$image", headshot);
     const allowedFileTypes = [
       "application/pdf",
       "application/msword",
@@ -406,9 +377,7 @@ const userRegister = async (req, res) => {
       interests: [], // Add interests if available
       declaration: J_data.Declaration || "No declaration provided", // Ensure the declaration is included
     };
-
     console.log("Prepared resume data:", resumeData);
-
     // Now, save the resume data to the database
     const resume = new resumeModel(resumeData);
     resume
@@ -433,56 +402,22 @@ const userRegister = async (req, res) => {
     };
 
     const mileStone = await mileStones(data);
-    // Check if mileStone is already a string and needs parsing
-    if (typeof mileStone === "string") {
-      try {
-        // If it's a string, we can parse it
-        const sanitized = mileStone
-          .trim()
-          .replace(/[\r\n\t]/g, "") // Remove newlines, tabs
-          .replace(/:\s*X/g, ': "Unknown"') // Replace invalid `X` values
-          .replace(/'/g, '"'); // Convert single to double quotes if needed
-        const mileStoneData = JSON.parse(sanitized); // Parse sanitized JSON data
-        for (const milestoneKey in mileStoneData) {
-          if (mileStoneData.hasOwnProperty(milestoneKey)) {
-            const milestoneDetails = mileStoneData[milestoneKey];
+    console.log("userController line 405");
+    console.dir(mileStone, { depth: null });
 
-            // Use Mongoose model to save the data
-            const newMilestone = new MileStone({
-              milestone: milestoneKey,
-              timeline: milestoneDetails.Timeline,
-              goals: milestoneDetails.Goals,
-              kpis: milestoneDetails.KPIs,
-              techVerse: milestoneDetails.TechVerse,
-              provision: milestoneDetails.ProVision,
-              bookVault: milestoneDetails.BookVault,
-              skillForge: milestoneDetails.SkillForge,
-              jobSphere: milestoneDetails.JobSphere,
-              eventPulse: milestoneDetails.EventPulse,
-              mentorLoop: milestoneDetails.MentorLoop,
-              netX: milestoneDetails.NetX,
-            });
-
-            // Save to the database
-            newMilestone
-              .save()
-              .then(() => {
-                console.log(`${milestoneKey} saved successfully!`);
-              })
-              .catch((err) => {
-                console.error(`Error saving ${milestoneKey}:`, err);
-              });
-          }
-        }
-      } catch (error) {
-        console.error("Error parsing JSON:", error);
-      }
-    } else {
-      // If mileStone is already an object, just use it directly
-      console.log("mileStone starts here");
-      console.dir(mileStone, { depth: null });
-    }
     newUser.save();
+
+    try {
+      const saveMileStones = new Milestone({
+        user_id: newUser._id,
+        milestones: mileStone,
+      });
+      console.log("aa gaya ", saveMileStones);
+      await saveMileStones.save();
+      console.log("saved");
+    } catch (error) {
+      console.log("$error", error);
+    }
 
     return res.json({
       status: 201,
@@ -500,6 +435,7 @@ const userRegister = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 const mileStones = async (data) => {
   try {
 <<<<<<<<< Temporary merge branch 1
@@ -781,6 +717,8 @@ const mileStones = async (data) => {
   }
 };
 
+=======
+>>>>>>> 379b05b5fc4ec629548954cc396526f5a8120ab6
 const userLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
