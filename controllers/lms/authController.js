@@ -1,6 +1,6 @@
 const User = require("../../models/lms/User");
 const jwt = require("jsonwebtoken");
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 require("dotenv").config();
 const loginUser = async (req, res) => {
   try {
@@ -28,10 +28,10 @@ const loginUser = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
-
+    
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user._id },
+      { userId: user._id , role: user.userType  },
       process.env.JWT_SECRET || "your_jwt_secret",
       { expiresIn: "24h" }
     );
