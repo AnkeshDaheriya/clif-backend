@@ -470,10 +470,11 @@ const googleLogin = async (req, res, next) => {
     let user = await authService.googleLogin(email);
 
     if (!user) {
-      // If user is not found, create a new user automatically
-      user = await authService.createGoogleUser(email, firstname, lastname);
+      // If the user doesn't exist, return an error with a message to sign up
+      return res
+        .status(403)
+        .json({ message: "User not found. Please sign up." });
     }
-
     // Generate JWT tokens
     res.header("auth-token", user.token);
     res.cookie("refreshToken", user.refreshToken, {
