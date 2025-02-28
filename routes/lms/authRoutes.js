@@ -7,7 +7,7 @@ const {
   changePassword,
 } = require("./../../controllers/lms/authController");
 const { getUsers } = require("../../controllers/lms/users");
-const { roleCheck } = require("../../authMiddleware/adminMiddleware");
+// const { roleCheck } = require("../../authMiddleware/adminMiddleware");
 router.post("/signup", signup);
 router.post("/login", loginUser);
 router.put("/change-password", changePassword);
