@@ -22,6 +22,7 @@ const authRoute = require("./routes/authRoute.js");
 const courseRoutes = require("./routes/lms/courseRoutes.js");
 const moduleRoutes = require("./routes/lms/moduleRoutes.js");
 const videoRoutes = require("./routes/lms/videoRoutes.js");
+const { mentorRouter } = require("./routes/lms/mentorRoutes.js");
 
 app.use(cors()); // ✅ Enable CORS before routes
 app.use(logger("dev"));
@@ -83,6 +84,10 @@ app.use("/api/courses", courseRoutes);
 app.use("/api/modules", moduleRoutes);
 app.use("/api/videos", videoRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// admin routes 
+app.use("/admin/api", mentorRouter );
+
 
 // ✅ 404 Error Handling
 app.use((req, res, next) => {

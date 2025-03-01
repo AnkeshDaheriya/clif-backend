@@ -1,5 +1,6 @@
 const mileStonePrompt = (data) => {
-  return `Generate a structured JSON career roadmap with exactly 8  Milestones, ensuring alignment with the candidate's Resume Data: and Career Goals:
+  const currentYear = new Date().getFullYear();
+  return `Generate a structured JSON career roadmap with up to 8 milestones, ensuring alignment with the candidate's Resume Data and Career Goals:
 ### Input Parameters:
 - Resume Data: ${data.resumeData}
 - Career Goals:
@@ -7,7 +8,22 @@ const mileStonePrompt = (data) => {
   - Desired Employer: ${data.desired_employer} 
   - Desired Salary: ${data.desired_salary} 
   - Desired Location: ${data.desired_country}
+
 ### Output Format (DO NOT CHANGE JSON STRUCTURE AND GENERATE EXACT 8 MILESTONES)
+### **Output Requirements:**  
+- **Ensure up to 8 meaningful milestones based on complexity.**  
+- **For each milestone, include:**  
+  - **Timeline:** Auto-generate start and end dates based on logical progressions.  
+  - **Primary Goal & Measurable Goals** (Ensure goals are actionable).  
+   - **KPIs:** Define key performance indicators (e.g., "Complete 3 Laravel projects", "Earn 2 certifications").  
+  - **TechVerse:** Suggest top 5 relevant **technical** courses.  
+  - **ProVision:** Suggest top 5 relevant **non-technical** courses (e.g., leadership, soft skills).  
+  - **BookVault:** Recommend relevant books (both **technical** and **non-technical**).  
+  - **SkillForge:** Provide top 3 relevant certifications.  
+  - **EventPulse:** List top 5 tech conferences or webinars.  
+  - **NetX:** Suggest networking strategies (e.g., open-source contributions, LinkedIn branding).
+
+  ### **Output Format (DO NOT MODIFY STRUCTURE)**  
  {
   "Milestone 1": {
     "Timeline": {
@@ -380,6 +396,8 @@ const mileStonePrompt = (data) => {
 **give in JSON FORMAT please without any extra character**.
 **assign start date and end date in each milestone from today's date.**.
 The output should be fully structured and ready for career tracking!
+- **Ensure each milestone follows this exact format.**  
+- **Adapt roadmap dynamically to match candidate’s goals.**
 `;
 };
 module.exports.mileStonePrompt = mileStonePrompt;
