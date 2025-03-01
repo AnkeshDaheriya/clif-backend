@@ -456,7 +456,6 @@ const userRegister = async (req, res) => {
               }
             }
           }
-
           console.log(
             `Data extraction complete. Saved ${savedRecords.books} books, ${savedRecords.events} events, and ${savedRecords.courses} courses.`
           );
@@ -466,24 +465,10 @@ const userRegister = async (req, res) => {
           throw error;
         }
       }
-
       const savedRecords = await extractAndSaveMilestoneData(userId, mileStone);
-
-      // Return response and end function execution
-      return res.json({
-        success: true,
-        message: "Milestone data saved successfully",
-        recordsSaved: savedRecords,
-      });
     } catch (error) {
       console.error("Error saving milestone data:", error);
-      res.json({
-        success: false,
-        message: "Failed to save milestone data",
-        error: error.message,
-      });
     }
-
     return res.json({
       status: 201,
       message: "User Registered success",
