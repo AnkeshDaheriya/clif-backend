@@ -15,7 +15,7 @@ const mileStonePrompt = (data) => {
 - **For each milestone, include:**  
   - **Timeline:** Auto-generate start and end dates based on logical progressions.  
   - **Primary Goal & Measurable Goals** (Ensure goals are actionable).  
-  - **KPIs:** Define key performance indicators (e.g., "Skill Development", "Practical Projects", "Networking & Visibility").  
+  - **KPIs:** Define key performance indicators (e.g., "").  
   - **TechVerse:** Suggest top 5 relevant **technical** courses.  
   - **ProVision:** Suggest top 5 relevant **non-technical** courses (e.g., leadership, soft skills).  
   - **BookVault:** Recommend relevant books (both **technical** and **non-technical**).  
