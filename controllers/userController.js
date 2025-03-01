@@ -57,7 +57,6 @@ const userRegister = async (req, res) => {
       !yearOfCompletion ||
       !desired_country ||
       !desired_state ||
-      !professionalDomain ||
       !currentRole ||
       !currentSalary ||
       !desiredRole ||
@@ -95,9 +94,6 @@ const userRegister = async (req, res) => {
           desired_state: !desired_state
             ? "Desired location city is required"
             : null,
-          professionalDomain: !professionalDomain
-            ? "Professional domain is required"
-            : null,
           currentRole: !currentRole ? "Current role is required" : null,
           currentSalary: !currentSalary ? "Current salary is required" : null,
           desiredRole: !desiredRole ? "Desired role is required" : null,
@@ -106,6 +102,9 @@ const userRegister = async (req, res) => {
         },
       });
     }
+
+    console.log("$file", req.file, req.files);
+    // console.log(fileLocation);
     if (!fileLocation) {
       if (!req.files.fileUpload) {
         return res.json({
@@ -206,14 +205,6 @@ const userRegister = async (req, res) => {
       "Business Intelligence",
       "Venture Capital",
     ];
-    if (!validProfessionalDomains.includes(professionalDomain)) {
-      return res.status(400).json({
-        status: 400,
-        message: "Invalid professional domain",
-        success: false,
-      });
-    }
-
     const validRoles = [
       "Undergrad / Not Employed",
       "Entry Level / Intern",
@@ -261,8 +252,6 @@ const userRegister = async (req, res) => {
         success: false,
       });
     }
-    console.log("test work");
-    // If all validations pass, proceed with user creation
     const existingUser = await userModel.findOne({ email });
     if (existingUser) {
       return res.json({
@@ -378,7 +367,6 @@ const userRegister = async (req, res) => {
       declaration: J_data.Declaration || "No declaration provided", // Ensure the declaration is included
     };
     console.log("Prepared resume data:", resumeData);
-    // Now, save the resume data to the database
     const resume = new resumeModel(resumeData);
     resume
       .save()
@@ -390,10 +378,8 @@ const userRegister = async (req, res) => {
       });
 
     // Save the resume to the database
-
     console.log("resume starts here");
     console.dir(J_data, { depth: null });
-    // resume.save();
     const data = {
       resumeData: J_data,
       desired_employer,
@@ -402,8 +388,8 @@ const userRegister = async (req, res) => {
     };
 
     const mileStone = await mileStones(data);
-    console.log("userController line 405");
-    console.dir(mileStone, { depth: null });
+    // console.log("userController line 405");
+    // console.dir(mileStone, { depth: null });
 
     newUser.save();
 
@@ -412,7 +398,7 @@ const userRegister = async (req, res) => {
         user_id: newUser._id,
         milestones: mileStone,
       });
-      console.log("aa gaya ", saveMileStones);
+      // console.log("aa gaya ", saveMileStones);
       await saveMileStones.save();
       console.log("saved");
     } catch (error) {
@@ -484,10 +470,11 @@ const googleLogin = async (req, res, next) => {
     let user = await authService.googleLogin(email);
 
     if (!user) {
-      // If user is not found, create a new user automatically
-      user = await authService.createGoogleUser(email, firstname, lastname);
+      // If the user doesn't exist, return an error with a message to sign up
+      return res
+        .status(403)
+        .json({ message: "User not found. Please sign up." });
     }
-
     // Generate JWT tokens
     res.header("auth-token", user.token);
     res.cookie("refreshToken", user.refreshToken, {

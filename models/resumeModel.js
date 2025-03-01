@@ -5,10 +5,10 @@ const resumeSchema = new mongoose.Schema({
     name: { type: String, required: false },
     email: { type: String, required: false, unique: true },
     phone: { type: String, required: false },
-    location: { type: String },
-    linkedin: { type: String },
-    github: { type: String },
-    portfolio: { type: String },
+    location: { type: String, required: false },
+    linkedin: { type: String, required: false },
+    github: { type: String, required: false },
+    portfolio: { type: String, required: false },
   },
   summary: { type: String, required: false },
   skills: {
@@ -22,9 +22,9 @@ const resumeSchema = new mongoose.Schema({
     {
       title: { type: String, required: false },
       company: { type: String, required: false },
-      location: { type: String },
+      location: { type: String, required: false },
       start_date: { type: Date, required: false },
-      end_date: { type: Date },
+      end_date: { type: Date, required: false },
       responsibilities: [{ type: String }],
     },
   ],
@@ -39,13 +39,13 @@ const resumeSchema = new mongoose.Schema({
     {
       title: { type: String, required: false },
       technologies: [{ type: String }],
-      description: { type: String },
+      description: { type: String, required: false },
     },
   ],
   certifications: [
     {
-      name: { type: String },
-      platform: { type: String },
+      name: { type: String, required: false },
+      platform: { type: String, required: false },
       status: { type: String, default: "Completed" },
     },
   ],

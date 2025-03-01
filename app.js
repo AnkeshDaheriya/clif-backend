@@ -16,9 +16,24 @@ const adminRoutes = require("./routes/admin/adminRoutes.js");
 const mentorRoutes = require("./routes/admin/mentorRoutes.js");
 const bcrypt = require("bcrypt");
 const WebSocket = require("ws");
-const multer = require("multer");
-
 var app = express();
+const multer = require("multer");
+const lmsRoutes = require("./routes/lms/authRoutes.js");
+const authRoute = require("./routes/authRoute.js");
+const courseRoutes = require("./routes/lms/courseRoutes.js");
+const moduleRoutes = require("./routes/lms/moduleRoutes.js");
+const videoRoutes = require("./routes/lms/videoRoutes.js");
+const bodyParser = require("body-parser");
+// const scrapeRoutes = require("./routes/scrape");
+const linkedinRoutes = require("./routes/linkedinRoutes");
+
+app.use(cors()); // ✅ Enable CORS before routes
+app.use(bodyParser.json());
+app.use(logger("dev"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, "public")));
 
 // ✅ Ensure upload directories exist dynamically
 const uploadDirs = ["uploads", "uploads/mentors", "uploads/recorded"];
@@ -75,7 +90,7 @@ const allowedOrigins =
         "https://www.uat.clif.ai",
         "https://www.clif.ai",
       ]
-    : ["http://localhost:3000", "http://localhost:3001"];
+    : ["http://localhost:3000", "http://localhost:3001"]; // Development origins
 
 app.use(
   cors({
@@ -157,6 +172,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/admin/api/admin", adminRoutes);
 app.use("/admin/api/mentors", mentorRoutes(upload));
 
+app.use("/linkedin", linkedinRoutes);
 // ✅ Test Route (Check if the server is running)
 app.get("/", (req, res) => {
   res.send("Server is running...");
