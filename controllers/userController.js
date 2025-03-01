@@ -10,6 +10,9 @@ const { uploadResume } = require("./resumeController.js");
 const { AIResume } = require("../helper/OpenAiHelper.js");
 const { promptFormat } = require("../config/prompt.js");
 const { mileStones, getMileStones } = require("./mileStoneController.js");
+const Books = require("../models/books.js");
+const Events = require("../models/events.js");
+const Courses = require("../models/videoTask.js");
 
 const userRegister = async (req, res) => {
   try {
@@ -308,66 +311,8 @@ const userRegister = async (req, res) => {
 
     const J_data = await JSON.parse(response);
     console.log("#Json DATA", J_data);
-    const resumeData = {
-      personal_info: {
-        name: `${J_data?.personal_info?.first_name || "Unknown"} ${
-          J_data?.personal_info?.last_name || "Unknown"
-        }`,
-        email:
-          J_data?.personal_info?.email ||
-          J_data["Personal Information"]?.email ||
-          "Not provided",
-        phone:
-          J_data?.personal_info?.phone ||
-          J_data["Personal Information"]?.phone ||
-          "Not provided",
-        location:
-          J_data?.personal_info?.location.city ||
-          J_data["Contact Information"]?.address ||
-          "Not provided", // Assuming address is available here
-        linkedin:
-          J_data?.personal_info?.linkedin ||
-          J_data.linkedinUrl ||
-          "Not provided", // If available
-        github: J_data.github || "Not provided", // If available
-        portfolio: J_data.portfolio || "Not provided", // If available
-      },
-      summary: J_data.summary || "No summary available", // Ensure there is always a fallback summary
-      skills: {
-        frontend:
-          J_data["Technical Skills"]?.filter((skill) =>
-            ["HTML", "CSS", "JavaScript"].includes(skill)
-          ) || [],
-        backend:
-          J_data["Technical Skills"]?.filter((skill) =>
-            ["C", "C++", "C#"].includes(skill)
-          ) || [],
-        database: [], // Add database skills if available
-        devops_tools: [], // Add DevOps tools if mentioned
-        other: [], // Add other skills if available
-      },
-      experience:
-        J_data["Internships & Trainings"]?.map((exp) => ({
-          title: exp.Title || "Unknown Title",
-          company: exp.Company || "Unknown Company",
-          location: "", // Add location if available
-          start_date: new Date(), // Map with actual date if mentioned
-          end_date: null, // Map with actual end date if mentioned
-          responsibilities: [], // Add responsibilities if available
-        })) || [],
-      education:
-        J_data["Education"]?.map((edu) => ({
-          degree: edu.Degree || "Unknown Degree",
-          university: edu.Institution || "Unknown University",
-          year: edu.Year || "Unknown Year",
-        })) || [],
-      projects: [], // Add projects if available
-      certifications: [], // Add certifications if available
-      interests: [], // Add interests if available
-      declaration: J_data.Declaration || "No declaration provided", // Ensure the declaration is included
-    };
-    console.log("Prepared resume data:", resumeData);
-    const resume = new resumeModel(resumeData);
+    console.log("Prepared resume data:", J_data);
+    const resume = new resumeModel({ resume_data: J_data });
     resume
       .save()
       .then(() => {
@@ -388,23 +333,144 @@ const userRegister = async (req, res) => {
     };
 
     const mileStone = await mileStones(data);
-    // console.log("userController line 405");
-    // console.dir(mileStone, { depth: null });
-
-    newUser.save();
+    console.log("mileStone", mileStone);
 
     try {
+      // Save the user first
+      await newUser.save();
+      const userId = newUser._id;
+
+      // Save milestones
       const saveMileStones = new Milestone({
-        user_id: newUser._id,
+        user_id: userId,
         milestones: mileStone,
       });
-      // console.log("aa gaya ", saveMileStones);
       await saveMileStones.save();
-      console.log("saved");
-    } catch (error) {
-      console.log("$error", error);
-    }
 
+      // Function to extract and save data from all milestones
+      async function extractAndSaveMilestoneData(userId, mileStone) {
+        try {
+          // Keep track of records saved
+          const savedRecords = {
+            books: 0,
+            events: 0,
+            courses: 0,
+          };
+
+          // Process each milestone from 1 to 8
+          for (let i = 1; i <= 8; i++) {
+            const milestone = mileStone[`Milestone ${i}`];
+            if (!milestone) continue;
+
+            // 1. Extract and save books (BookVault)
+            if (
+              milestone.BookVault &&
+              milestone.BookVault["Recommended Books"] &&
+              milestone.BookVault["Recommended Books"]["Technical Books"]
+            ) {
+              // Technical books
+              const technicalBooks =
+                milestone.BookVault["Recommended Books"]["Technical Books"];
+              for (const book of technicalBooks) {
+                const bookId = `BK${i}${Date.now()
+                  .toString()
+                  .slice(-4)}${Math.floor(Math.random() * 1000)}`;
+                const bookEntry = new Books({
+                  bid: bookId,
+                  book_name: book,
+                  uid: userId,
+                  milestone: i,
+                  type: "techBook",
+                });
+                await bookEntry.save();
+                savedRecords.books++;
+              }
+
+              // Non-technical book(s)
+              const nonTechBook =
+                milestone.BookVault["Recommended Books"]["Non-Technical Book"];
+              if (nonTechBook) {
+                // Handle both array and string cases
+                const nonTechBooks = Array.isArray(nonTechBook)
+                  ? nonTechBook
+                  : [nonTechBook];
+
+                for (const book of nonTechBooks) {
+                  const bookId = `BK${i}${Date.now()
+                    .toString()
+                    .slice(-4)}${Math.floor(Math.random() * 1000)}`;
+                  // Using the correct Books model for non-technical books
+                  const bookEntry = new Books({
+                    bid: bookId,
+                    book_name: book,
+                    uid: userId,
+                    milestone: i,
+                    type: "nonTechBook",
+                  });
+                  await bookEntry.save();
+                  savedRecords.books++;
+                }
+              }
+            }
+
+            // 2. Extract and save events (EventPulse)
+            if (
+              milestone.EventPulse &&
+              milestone.EventPulse["Top 5 Events/Webinars"]
+            ) {
+              const eventsList = milestone.EventPulse["Top 5 Events/Webinars"];
+              for (const event of eventsList) {
+                const eventId = `EV${i}${Date.now()
+                  .toString()
+                  .slice(-4)}${Math.floor(Math.random() * 1000)}`;
+                // Using the correct Events model (capitalized to match import)
+                const eventEntry = new Events({
+                  eid: eventId,
+                  event_name: event,
+                  uid: userId,
+                  milestone: i,
+                });
+                await eventEntry.save();
+                savedRecords.events++;
+              }
+            }
+
+            // 3. Extract and save courses/videos (TechVerse)
+            if (
+              milestone.TechVerse &&
+              milestone.TechVerse["Top 5 Relevant Technical Courses"]
+            ) {
+              const coursesList =
+                milestone.TechVerse["Top 5 Relevant Technical Courses"];
+              for (const course of coursesList) {
+                const courseId = `CR${i}${Date.now()
+                  .toString()
+                  .slice(-4)}${Math.floor(Math.random() * 1000)}`;
+                // Using the correct Courses model based on the import
+                const courseEntry = new Courses({
+                  cid: courseId,
+                  courseName: course,
+                  uid: userId,
+                  milestone: i,
+                });
+                await courseEntry.save();
+                savedRecords.courses++;
+              }
+            }
+          }
+          console.log(
+            `Data extraction complete. Saved ${savedRecords.books} books, ${savedRecords.events} events, and ${savedRecords.courses} courses.`
+          );
+          return savedRecords;
+        } catch (error) {
+          console.error("Error extracting and saving milestone data:", error);
+          throw error;
+        }
+      }
+      const savedRecords = await extractAndSaveMilestoneData(userId, mileStone);
+    } catch (error) {
+      console.error("Error saving milestone data:", error);
+    }
     return res.json({
       status: 201,
       message: "User Registered success",

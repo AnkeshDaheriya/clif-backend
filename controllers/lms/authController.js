@@ -1,6 +1,6 @@
 const User = require("../../models/lms/User");
 const jwt = require("jsonwebtoken");
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 require("dotenv").config();
 const loginUser = async (req, res) => {
   try {
@@ -31,9 +31,9 @@ const loginUser = async (req, res) => {
 
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user._id },
+      { userId: user._id, role: user.userType },
       process.env.JWT_SECRET || "your_jwt_secret",
-      { expiresIn: "24h" }
+      { expiresIn: "12h " }
     );
 
     // Return user data and token
@@ -122,7 +122,7 @@ const signup = async (req, res) => {
     const token = jwt.sign(
       { userId: user._id },
       process.env.JWT_SECRET || "your_jwt_secret",
-      { expiresIn: "24h" }
+      { expiresIn: "12h" }
     );
 
     res.status(201).json({
