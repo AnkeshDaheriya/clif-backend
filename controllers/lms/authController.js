@@ -28,12 +28,12 @@ const loginUser = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
-    
+
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user._id , role: user.userType  },
+      { userId: user._id, role: user.userType },
       process.env.JWT_SECRET || "your_jwt_secret",
-      { expiresIn: "24h" }
+      { expiresIn: "12h " }
     );
 
     // Return user data and token
@@ -122,7 +122,7 @@ const signup = async (req, res) => {
     const token = jwt.sign(
       { userId: user._id },
       process.env.JWT_SECRET || "your_jwt_secret",
-      { expiresIn: "24h" }
+      { expiresIn: "12h" }
     );
 
     res.status(201).json({

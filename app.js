@@ -13,18 +13,20 @@ const otpRoutes = require("./routes/otpRoute.js");
 const { mileStoneRouter } = require("./routes/mileStone.js");
 const bcrypt = require("bcrypt");
 const WebSocket = require("ws");
-// const https = require("https");
-// const fs = require("fs");
 var app = express();
-// const multer = require("multer");
+const multer = require("multer");
 const lmsRoutes = require("./routes/lms/authRoutes.js");
 const authRoute = require("./routes/authRoute.js");
 const courseRoutes = require("./routes/lms/courseRoutes.js");
 const moduleRoutes = require("./routes/lms/moduleRoutes.js");
 const videoRoutes = require("./routes/lms/videoRoutes.js");
+const bodyParser = require("body-parser");
+// const scrapeRoutes = require("./routes/scrape");
+const linkedinRoutes = require("./routes/linkedinRoutes");
 const { mentorRouter } = require("./routes/lms/mentorRoutes.js");
 
 app.use(cors()); // ✅ Enable CORS before routes
+app.use(bodyParser.json());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -39,7 +41,7 @@ const allowedOrigins =
         "https://clif.ai",
         "https://www.uat.clif.ai",
         "https://www.clif.ai",
-      ] // Production origin
+      ]
     : ["http://localhost:3000", "http://localhost:3001"]; // Development origins
 
 app.use(
@@ -74,6 +76,7 @@ app.use("/auth", authRoute);
 app.use("/resume", uploadRoutes);
 app.use("/auth", otpRoutes);
 app.use("/mileStone", mileStoneRouter);
+app.use("/linkedin", linkedinRoutes);
 // ✅ Test Route (Check if the server is running)
 app.get("/", (req, res) => {
   res.send("Server is running...");
