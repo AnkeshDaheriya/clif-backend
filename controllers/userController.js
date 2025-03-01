@@ -380,6 +380,7 @@ const userRegister = async (req, res) => {
                   book_name: book,
                   uid: userId,
                   milestone: i,
+                  type: "techBook",
                 });
                 await bookEntry.save();
                 savedRecords.books++;
@@ -404,6 +405,7 @@ const userRegister = async (req, res) => {
                     book_name: book,
                     uid: userId,
                     milestone: i,
+                    type: "nonTechBook",
                   });
                   await bookEntry.save();
                   savedRecords.books++;
