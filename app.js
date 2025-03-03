@@ -27,6 +27,7 @@ const bodyParser = require("body-parser");
 // const scrapeRoutes = require("./routes/scrape");
 const linkedinRoutes = require("./routes/linkedinRoutes");
 const { mentorRouter } = require("./routes/lms/mentorRoutes.js");
+const { assignMentorRoutes } = require("./routes/admin/assignMentorRoutes.js");
 
 app.use(cors()); // ✅ Enable CORS before routes
 app.use(bodyParser.json());
@@ -172,6 +173,7 @@ app.use("/api/videos", require("./routes/lms/videoRoutes.js"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/admin/api/admin", adminRoutes);
 app.use("/admin/api/mentors", mentorRoutes(upload));
+app.use("/admin/mentors", assignMentorRoutes);
 
 app.use("/linkedin", linkedinRoutes);
 // ✅ Test Route (Check if the server is running)
@@ -179,9 +181,8 @@ app.get("/", (req, res) => {
   res.send("Server is running...");
 });
 
-// admin routes 
-app.use("/admin/api", mentorRouter );
-
+// admin routes
+app.use("/admin/api", mentorRouter);
 
 // ✅ 404 Error Handling
 app.use((req, res, next) => {
