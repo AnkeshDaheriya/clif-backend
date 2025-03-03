@@ -2,6 +2,7 @@ const { mileStonePrompt } = require("../config/mileStonePrompt");
 const { AIResume } = require("../helper/OpenAiHelper");
 const Milestone = require("../models/mileStoneModel");
 const BookTask = require("../models/books");
+const EventTask = require('../models/events');
 // const jsonRepair = require("jsonrepair");
 
 // const getMileStones = async (req, res) => {
@@ -60,6 +61,10 @@ const getMileStones = async (req, res) => {
         uid: userId,
       });
 
+      const events = await EventTask.find({
+        uid : userId,
+      })
+
       if (books && books.length > 0) {
         // Step 3: Organize books by milestone
         const booksByMilestone = {};
@@ -102,13 +107,14 @@ const getMileStones = async (req, res) => {
           
           // Keep original BookVault structure but replace the Recommended Books
           const originalBookVault = mileStone.milestones[milestoneKey].BookVault || {};
+          // console.log("originalBookVault: ", originalBookVault);
           
           mileStone.milestones[milestoneKey].BookVault = {
             "What it Covers": originalBookVault["What it Covers"],
             "Focus Areas": originalBookVault["Focus Areas"],
             "Recommended Books": {
               "Technical Books": booksByMilestone[milestoneNumber]?.technicalBooks.map(book => book) || [],
-              "Non-Technical Book": booksByMilestone[milestoneNumber]?.nonTechnicalBooks.map(book => book)[0] || ""
+              "Non-Technical Books": booksByMilestone[milestoneNumber]?.nonTechnicalBooks.map(book => book)[0] || []
             }
           };
         }
