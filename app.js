@@ -28,6 +28,8 @@ const bodyParser = require("body-parser");
 const linkedinRoutes = require("./routes/linkedinRoutes");
 const { mentorRouter } = require("./routes/lms/mentorRoutes.js");
 const { assignMentorRoutes } = require("./routes/admin/assignMentorRoutes.js");
+// mentor routes
+// const mentorRoutes = require("./routes/mentor/authRoutes.js");
 
 app.use(cors()); // ✅ Enable CORS before routes
 app.use(bodyParser.json());
@@ -87,11 +89,11 @@ const upload = multer({
 const allowedOrigins =
   process.env.NODE_ENV === "production"
     ? [
-        "https://uat.clif.ai",
-        "https://clif.ai",
-        "https://www.uat.clif.ai",
-        "https://www.clif.ai",
-      ]
+      "https://uat.clif.ai",
+      "https://clif.ai",
+      "https://www.uat.clif.ai",
+      "https://www.clif.ai",
+    ]
     : ["http://localhost:3000", "http://localhost:3001"]; // Development origins
 
 app.use(
@@ -174,6 +176,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/admin/api/admin", adminRoutes);
 app.use("/admin/api/mentors", mentorRoutes(upload));
 app.use("/admin/mentors", assignMentorRoutes);
+// mentor routes
+app.use("/mentor/auth", require("./routes/mentor/authRoutes.js"));
 
 app.use("/linkedin", linkedinRoutes);
 // ✅ Test Route (Check if the server is running)
