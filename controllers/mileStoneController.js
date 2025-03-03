@@ -2,42 +2,8 @@ const { mileStonePrompt } = require("../config/mileStonePrompt");
 const { AIResume } = require("../helper/OpenAiHelper");
 const Milestone = require("../models/mileStoneModel");
 const BookTask = require("../models/books");
-const EventTask = require('../models/events');
+const EventTask = require("../models/events");
 // const jsonRepair = require("jsonrepair");
-
-// const getMileStones = async (req, res) => {
-//   const { userId } = req.body;
-//   if (!userId) {
-//     return res.status(400).json({
-//       success: false,
-//       message: "User ID is required",
-//     });
-//   }
-//   try {
-//     const mileStone = await Milestone.findOne({
-//       user_id: userId,
-//     });
-//     if (mileStone) {
-//       return res.json({
-//         success: true,
-//         message: "MileStones fetched successfully",
-//         data: mileStone,
-//       });
-//     } else {
-//       return res.json({
-//         success: false,
-//         message: "No milestone found for this user",
-//       });
-//     }
-//   } catch (err) {
-//     console.log("Error fetching mileStones: ", err);
-//     return res.status(500).json({
-//       success: false,
-//       message: "Internal Server Error",
-//     });
-//   }
-// };
-
 
 // mileStone with books from book task
 const getMileStones = async (req, res) => {
@@ -60,38 +26,38 @@ const getMileStones = async (req, res) => {
       const books = await BookTask.find({
         uid: userId,
       });
-
-      const events = await EventTask.find({
-        uid : userId,
-      })
+      console.log("books", books);
+      // const events = await EventTask.find({
+      //   uid: userId,
+      // });
 
       if (books && books.length > 0) {
         // Step 3: Organize books by milestone
         const booksByMilestone = {};
-        
+
         // Create an initial structure for each milestone
         for (const milestoneKey in mileStone.milestones) {
-          const milestoneNumber = parseInt(milestoneKey.split(' ')[1]);
+          const milestoneNumber = parseInt(milestoneKey.split(" ")[1]);
           booksByMilestone[milestoneNumber] = {
             technicalBooks: [],
-            nonTechnicalBooks: []
+            nonTechnicalBooks: [],
           };
         }
-        
+
         // Categorize books by milestone and type
         books.forEach((book) => {
           if (!book.milestone) return; // Skip if no milestone assigned
-          
+
           const bookData = {
             book_name: book.book_name,
             book_id: book.bid,
             isRead: book.isRead,
             type: book.type,
-            mileStone: book.milestone
+            mileStone: book.milestone,
           };
-          
+
           const milestoneNum = parseInt(book.milestone);
-          
+
           if (booksByMilestone[milestoneNum]) {
             if (book.type === "techBook") {
               booksByMilestone[milestoneNum].technicalBooks.push(bookData);
@@ -103,27 +69,36 @@ const getMileStones = async (req, res) => {
 
         // Step 4: Update each milestone's BookVault with its respective books
         for (const milestoneKey in mileStone.milestones) {
-          const milestoneNumber = parseInt(milestoneKey.split(' ')[1]);
-          
+          const milestoneNumber = parseInt(milestoneKey.split(" ")[1]);
+
           // Keep original BookVault structure but replace the Recommended Books
-          const originalBookVault = mileStone.milestones[milestoneKey].BookVault || {};
+          const originalBookVault =
+            mileStone.milestones[milestoneKey].BookVault || {};
           // console.log("originalBookVault: ", originalBookVault);
-          
+
           mileStone.milestones[milestoneKey].BookVault = {
             "What it Covers": originalBookVault["What it Covers"],
             "Focus Areas": originalBookVault["Focus Areas"],
             "Recommended Books": {
-              "Technical Books": booksByMilestone[milestoneNumber]?.technicalBooks.map(book => book) || [],
-              "Non-Technical Books": booksByMilestone[milestoneNumber]?.nonTechnicalBooks.map(book => book)[0] || []
-            }
+              "Technical Books":
+                booksByMilestone[milestoneNumber]?.technicalBooks.map(
+                  (book) => book
+                ) || [],
+              "Non-Technical Books":
+                booksByMilestone[milestoneNumber]?.nonTechnicalBooks.map(
+                  (book) => book
+                )[0] || [],
+            },
           };
         }
       }
-      
+
+      console.dir(mileStone, { depth: null });
+
       return res.json({
         success: true,
         message: "MileStones fetched and books updated successfully",
-        data: mileStone
+        data: mileStone,
       });
     } else {
       return res.json({
