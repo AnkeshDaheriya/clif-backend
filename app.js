@@ -28,6 +28,9 @@ const bodyParser = require("body-parser");
 const linkedinRoutes = require("./routes/linkedinRoutes");
 const { mentorRouter } = require("./routes/lms/mentorRoutes.js");
 const { assignMentorRoutes } = require("./routes/admin/assignMentorRoutes.js");
+const { EventRoutes } = require("./routes/admin/event Routes.js");
+const adminBookRoutes = require("./routes/admin/adminBookRoutes.js");
+const { certificateRouter } = require("./routes/admin/certificateRoutes.js");
 
 app.use(cors()); // ✅ Enable CORS before routes
 app.use(bodyParser.json());
@@ -52,6 +55,8 @@ const storage = multer.diskStorage({
       cb(null, "uploads/mentors");
     } else if (req.originalUrl.includes("/api/analyze")) {
       cb(null, "uploads/recorded");
+    } else if (req.originalUrl.includes("/admin/books")) {
+      cb(null, "uploads/books");
     } else {
       cb(null, "uploads");
     }
@@ -173,7 +178,18 @@ app.use("/api/videos", require("./routes/lms/videoRoutes.js"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/admin/api/admin", adminRoutes);
 app.use("/admin/api/mentors", mentorRoutes(upload));
+
+// assign mentor routes
 app.use("/admin/mentors", assignMentorRoutes);
+
+// event routes
+app.use("/admin/event", EventRoutes);
+
+// book routes
+app.use("/admin/books", adminBookRoutes(upload));
+
+// certificate routes
+app.use("/admin/certificates", certificateRouter);
 
 app.use("/linkedin", linkedinRoutes);
 // ✅ Test Route (Check if the server is running)
