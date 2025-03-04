@@ -61,3 +61,18 @@ exports.getModulesByCourse = async (req, res) => {
     });
   }
 };
+
+exports.getModuleById = async (req, res) => {
+  try {
+    const module = await Module.findById(req.params.moduleId);
+    if (!module) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Module not found" });
+    }
+    res.json({ success: true, module });
+  } catch (error) {
+    console.error("Error fetching module:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
