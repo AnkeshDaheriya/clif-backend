@@ -32,6 +32,7 @@ const { assignMentorRoutes } = require("./routes/admin/assignMentorRoutes.js");
 const { EventRoutes } = require("./routes/admin/event Routes.js");
 const adminBookRoutes = require("./routes/admin/adminBookRoutes.js");
 const { certificateRouter } = require("./routes/admin/certificateRoutes.js");
+const progressRoutes = require("./routes/lms/VideoProgressRoutes.js");
 
 app.use(cors()); // ✅ Enable CORS before routes
 app.use(bodyParser.json());
@@ -180,6 +181,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/admin/api/admin", adminRoutes);
 app.use("/admin/api/mentors", mentorRoutes(upload));
 app.use("/api/enrollments", enrollmentRoutes);
+app.use("/api/progress", progressRoutes);
 // Search Courses
 
 // assign mentor routes
