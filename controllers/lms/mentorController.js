@@ -1,8 +1,8 @@
-const UserModel = require("../../models/lms/User");
+const Mentor = require("../../models/admin/mentorModel");
 const getAllMentor = async (req, res) => {
   try {
-    const mentors = await UserModel.find({
-      userType: "Instructor",
+    const mentors = await Mentor.find({
+      isDeleted : false
     });
     console.log("Mentor list", mentors);
 

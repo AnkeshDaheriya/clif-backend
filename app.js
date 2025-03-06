@@ -27,9 +27,12 @@ const bodyParser = require("body-parser");
 // const scrapeRoutes = require("./routes/scrape");
 const linkedinRoutes = require("./routes/linkedinRoutes");
 const { mentorRouter } = require("./routes/lms/mentorRoutes.js");
+const enrollmentRoutes = require("./routes/lms/enrollmentRoutes.js");
 const { assignMentorRoutes } = require("./routes/admin/assignMentorRoutes.js");
-// mentor routes
-// const mentorRoutes = require("./routes/mentor/authRoutes.js");
+const { EventRoutes } = require("./routes/admin/event Routes.js");
+const adminBookRoutes = require("./routes/admin/adminBookRoutes.js");
+const { certificateRouter } = require("./routes/admin/certificateRoutes.js");
+const progressRoutes = require("./routes/lms/VideoProgressRoutes.js");
 
 app.use(cors()); // ✅ Enable CORS before routes
 app.use(bodyParser.json());
@@ -37,7 +40,7 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+app.use("/public", express.static(path.join(__dirname, "public")));
 
 // ✅ Ensure upload directories exist dynamically
 const uploadDirs = ["uploads", "uploads/mentors", "uploads/recorded"];
@@ -54,6 +57,8 @@ const storage = multer.diskStorage({
       cb(null, "uploads/mentors");
     } else if (req.originalUrl.includes("/api/analyze")) {
       cb(null, "uploads/recorded");
+    } else if (req.originalUrl.includes("/admin/books")) {
+      cb(null, "uploads/books");
     } else {
       cb(null, "uploads");
     }
@@ -109,7 +114,6 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
 
 // ✅ Video Analysis Route
 app.post("/api/analyze", upload.single("video"), (req, res) => {
@@ -175,11 +179,25 @@ app.use("/api/videos", require("./routes/lms/videoRoutes.js"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/admin/api/admin", adminRoutes);
 app.use("/admin/api/mentors", mentorRoutes(upload));
+app.use("/api/enrollments", enrollmentRoutes);
+app.use("/api/progress", progressRoutes);
+// Search Courses
+
+// assign mentor routes
 app.use("/admin/mentors", assignMentorRoutes);
 // mentor routes
 app.use("/mentor/auth", require("./routes/mentor/authRoutes.js"));
 app.use("/mentor/availability", require("./routes/mentor/availabilityRoutes.js"));
 app.use("/mentor/booking", require("./routes/mentor/bookingRoutes.js"));
+
+// event routes
+app.use("/admin/event", EventRoutes);
+
+// book routes
+app.use("/admin/books", adminBookRoutes(upload));
+
+// certificate routes
+app.use("/admin/certificates", certificateRouter);
 
 app.use("/linkedin", linkedinRoutes);
 // ✅ Test Route (Check if the server is running)

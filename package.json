@@ -36,6 +36,7 @@
     "nodemon": "^3.1.9",
     "openai": "^4.85.3",
     "pdf-parser": "^1.0.5",
+    "string-similarity": "^4.0.4",
     "vimeo": "^2.3.1",
     "ws": "^8.18.0"
   }
