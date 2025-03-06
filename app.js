@@ -183,7 +183,6 @@ app.use("/admin/api/mentors", mentorRoutes(upload));
 app.use("/api/enrollments", enrollmentRoutes);
 app.use("/api/progress", progressRoutes);
 // Search Courses
-
 // assign mentor routes
 app.use("/admin/mentors", assignMentorRoutes);
 
