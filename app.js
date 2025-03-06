@@ -178,6 +178,8 @@ app.use("/admin/api/mentors", mentorRoutes(upload));
 app.use("/admin/mentors", assignMentorRoutes);
 // mentor routes
 app.use("/mentor/auth", require("./routes/mentor/authRoutes.js"));
+app.use("/mentor/availability", require("./routes/mentor/availabilityRoutes.js"));
+app.use("/mentor/booking", require("./routes/mentor/bookingRoutes.js"));
 
 app.use("/linkedin", linkedinRoutes);
 // ✅ Test Route (Check if the server is running)
