@@ -40,7 +40,7 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+app.use("/public", express.static(path.join(__dirname, "public")));
 
 // ✅ Ensure upload directories exist dynamically
 const uploadDirs = ["uploads", "uploads/mentors", "uploads/recorded"];
@@ -114,7 +114,6 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
 
 // ✅ Video Analysis Route
 app.post("/api/analyze", upload.single("video"), (req, res) => {
