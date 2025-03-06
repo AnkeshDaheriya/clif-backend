@@ -308,21 +308,7 @@ const userRegister = async (req, res) => {
     non technical skills in a array and all other skills in a array all within skills section  `;
 
     const response = await AIResume(prompt);
-
     const J_data = await JSON.parse(response);
-    console.log("#Json DATA", J_data);
-    console.log("Prepared resume data:", J_data);
-    const resume = new resumeModel({ resume_data: J_data });
-    resume
-      .save()
-      .then(() => {
-        console.log("Resume saved successfully:", resume);
-      })
-      .catch((error) => {
-        console.error("Error saving resume:", error);
-      });
-
-    // Save the resume to the database
     console.log("resume starts here");
     console.dir(J_data, { depth: null });
     const data = {
@@ -331,7 +317,7 @@ const userRegister = async (req, res) => {
       desired_country,
       desired_state,
     };
-
+    console.log("data", data);
     const mileStone = await mileStones(data);
     console.log("mileStone", mileStone);
 
@@ -340,6 +326,15 @@ const userRegister = async (req, res) => {
       await newUser.save();
       const userId = newUser._id;
 
+      const resume = new resumeModel({ user_id: userId, resume_data: J_data });
+      await resume
+        .save()
+        .then(() => {
+          console.log("Resume saved successfully:", resume);
+        })
+        .catch((error) => {
+          console.error("Error saving resume:", error);
+        });
       // Save milestones
       const saveMileStones = new Milestone({
         user_id: userId,
