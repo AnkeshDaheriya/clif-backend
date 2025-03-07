@@ -1,4 +1,4 @@
-const Mentor = require("../../models/admin/mentorModel");
+const Mentor = require("../../models/admin/mentorModel.js");
 const getAllMentor = async (req, res) => {
   try {
     const mentors = await Mentor.find({

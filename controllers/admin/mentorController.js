@@ -1,4 +1,4 @@
-const Mentor = require("../../models/admin/mentorModel");
+const Mentor = require("../../models/mentor/mentor");
 const fs = require("fs");
 const path = require("path");
 
