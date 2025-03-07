@@ -26,18 +26,22 @@ const eventSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    isDeleted : {
-        type : Boolean,
-        default : false,
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
-    isEnded :{
-      type : Boolean,
-      default : false,
-    }
+    isEnded: {
+      type: Boolean,
+      default: false,
+    },
+    isCompleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-module.exports = mongoose.model("events",   eventSchema);
+module.exports = mongoose.model("events", eventSchema);
