@@ -285,14 +285,6 @@ const getBookProgress = async (req, res) => {
         message: "Book progress fetched successfully",
         progress,
       });
-    } else {
-      return res
-        .status(404)
-        .json({
-          message: "Book progress not found",
-          book: book_id,
-          user: user_id,
-        });
     }
   } catch (error) {
     console.error("Error fetching book progress:", error); // Log the error to get more details
