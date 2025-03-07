@@ -94,11 +94,11 @@ const upload = multer({
 const allowedOrigins =
   process.env.NODE_ENV === "production"
     ? [
-        "https://uat.clif.ai",
-        "https://clif.ai",
-        "https://www.uat.clif.ai",
-        "https://www.clif.ai",
-      ]
+      "https://uat.clif.ai",
+      "https://clif.ai",
+      "https://www.uat.clif.ai",
+      "https://www.clif.ai",
+    ]
     : ["http://localhost:3000", "http://localhost:3001"]; // Development origins
 
 app.use(
@@ -184,6 +184,10 @@ app.use("/api/progress", progressRoutes);
 // Search Courses
 // assign mentor routes
 app.use("/admin/mentors", assignMentorRoutes);
+// mentor routes
+app.use("/mentor/auth", require("./routes/mentor/authRoutes.js"));
+app.use("/mentor/availability", require("./routes/mentor/availabilityRoutes.js"));
+app.use("/mentor/booking", require("./routes/mentor/bookingRoutes.js"));
 
 // event routes
 app.use("/admin/event", EventRoutes);
