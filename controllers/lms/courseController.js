@@ -159,6 +159,112 @@ exports.getCourseDetails = async (req, res) => {
 const { TextEncoder } = require("util");
 
 // Alternative: use a similar package for other AI providers like Cohere, HuggingFace, etc.
+// exports.searchCourse = async (req, res) => {
+//   try {
+//     const { query } = req.query;
+//     console.log(query);
+
+//     if (!query) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Query parameter is required",
+//       });
+//     }
+
+//     // First get potential matches using regex for better performance
+//     const potentialMatches = await Course.find({
+//       $or: [
+//         { title: { $regex: query, $options: "i" } },
+//         { description: { $regex: query, $options: "i" } },
+//         { category: { $regex: query, $options: "i" } },
+//         { keywords: { $regex: query, $options: "i" } },
+//         { skillLevel: { $regex: query, $options: "i" } },
+//         { language: { $regex: query, $options: "i" } },
+//       ],
+//     });
+
+//     // If no potential matches, get a sample of recent courses to compare
+//     let coursesToScore = potentialMatches;
+//     if (potentialMatches.length < 5) {
+//       const recentCourses = await Course.find()
+//         .sort({ createdAt: -1 })
+//         .limit(50);
+//       coursesToScore = [...new Set([...potentialMatches, ...recentCourses])];
+//     }
+
+//     // Calculate similarity scores
+//     const scoredCourses = coursesToScore.map((course) => {
+//       // Create a comprehensive text representation of the course
+//       // Use nullish coalescing operator to handle undefined/null values
+//       const courseText = `${course.title || ""} ${course.description || ""} ${
+//         course.category || ""
+//       } ${course.keywords || ""} ${course.skillLevel || ""} ${
+//         course.language || ""
+//       }`.toLowerCase();
+
+//       // Calculate similarity
+//       const similarityScore =
+//         stringSimilarity.compareTwoStrings(query.toLowerCase(), courseText) *
+//         100; // Convert to 0-100 scale
+
+//       // Apply additional weighting for keywords match
+//       let keywordBoost = 0;
+
+//       // Check if keywords exists before splitting
+//       if (course.keywords) {
+//         const keywordArray = course.keywords
+//           .split(",")
+//           .map((k) => k.trim().toLowerCase());
+//         if (
+//           keywordArray.some(
+//             (keyword) =>
+//               query.toLowerCase().includes(keyword) ||
+//               keyword.includes(query.toLowerCase())
+//           )
+//         ) {
+//           keywordBoost = 20; // Boost score if query directly relates to keywords
+//         }
+//       }
+
+//       // Apply category boost - check if category exists
+//       const categoryBoost =
+//         course.category && course.category.includes(query.toLowerCase())
+//           ? 15
+//           : 0;
+
+//       // Final score with boosts
+//       const finalScore = Math.min(
+//         100,
+//         similarityScore + keywordBoost + categoryBoost
+//       );
+
+//       return {
+//         ...course.toObject(),
+//         relevanceScore: finalScore,
+//       };
+//     });
+
+//     // Sort by similarity score and filter out low-relevance results
+//     const sortedCourses = scoredCourses
+//       .sort((a, b) => b.relevanceScore - a.relevanceScore)
+//       .filter((course) => course.relevanceScore > 25); // Minimum relevance threshold
+
+//     console.log(sortedCourses);
+
+//     res.json({
+//       success: true,
+//       courses: sortedCourses,
+//     });
+//   } catch (error) {
+//     console.error("Error searching courses:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Error fetching course details",
+//       error: error.message,
+//     });
+//   }
+// };
+
 exports.searchCourse = async (req, res) => {
   try {
     const { query } = req.query;
@@ -189,7 +295,25 @@ exports.searchCourse = async (req, res) => {
       const recentCourses = await Course.find()
         .sort({ createdAt: -1 })
         .limit(50);
-      coursesToScore = [...new Set([...potentialMatches, ...recentCourses])];
+
+      // Track courses by ID to ensure uniqueness
+      const courseMap = new Map();
+
+      // Add potential matches to the map first
+      potentialMatches.forEach((course) => {
+        courseMap.set(course._id.toString(), course);
+      });
+
+      // Then add recent courses only if they're not already in the map
+      recentCourses.forEach((course) => {
+        const courseId = course._id.toString();
+        if (!courseMap.has(courseId)) {
+          courseMap.set(courseId, course);
+        }
+      });
+
+      // Convert map values to array
+      coursesToScore = Array.from(courseMap.values());
     }
 
     // Calculate similarity scores
@@ -228,7 +352,8 @@ exports.searchCourse = async (req, res) => {
 
       // Apply category boost - check if category exists
       const categoryBoost =
-        course.category && course.category.includes(query.toLowerCase())
+        course.category &&
+        course.category.toLowerCase().includes(query.toLowerCase())
           ? 15
           : 0;
 
